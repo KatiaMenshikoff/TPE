@@ -3,14 +3,6 @@
 #include <string.h>
 #include "QueryTAD.h"
 
-typedef struct year{
-    char year[4];
-    long Dweek; // peatones anuales en día de semana.
-    long Dweekend; // peatones anuales en fin de semana.
-    long total;
-    struct year * next; // siguiente año porque vamos a armar una lista de años.
-}Tyear;
-
 
 typedef struct {
     TSensor * vecSen;
@@ -22,4 +14,6 @@ typedef struct {
 QueryADT newQuery(){
     return calloc(1, sizeof(QueryCDT));
 }
+
+
 
