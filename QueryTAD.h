@@ -2,6 +2,7 @@
 #define QUERYTAD
 #include <stdio.h>
 #include <stdlib.h>
+#define DIM_SENS 85
 
 typedef struct QueryCDT *QueryADT;
 
