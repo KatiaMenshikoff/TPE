@@ -2,7 +2,7 @@
 #define QUERYTAD
 #include <stdio.h>
 #include <stdlib.h>
-#define DIM_SENS 85
+#define DIM_SENS 86
 
 typedef enum days {
   Monday = 0,
@@ -23,7 +23,7 @@ typedef struct sensor {
            // como en el .c
 
 typedef struct year {
-  char year[4];
+  size_t year;
   long Dweek;    // peatones anuales en día de semana.
   long Dweekend; // peatones anuales en fin de semana.
   long total;

@@ -1,21 +1,25 @@
 #include "QueryTAD.h"
 #include <ctype.h>
 #include <math.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define MAX_LINE 250
 
-Tyear * makeList(FILE * fReadings, TSensor vecSensors[]);
-TSensor * makeVec(FILE * fSensor);
-Tyear *makeRec(Tyear *l, char year[], int day, int ID, int pedestrians, TSensor sensors[]);
+Tyear *makeList(FILE *fReadings, TSensor vecSensors[]);
+TSensor *makeVec(FILE *fSensor, TSensor vecSensors[]);
+Tyear *makeRec(Tyear *l, size_t year, int day, int ID, int pedestrians,
+               TSensor sensors[]);
 
 int main(int argc, char *argv[]) {
-  FILE * fSensor = fopen(argv[1], "rt");
+  FILE *fSensor = fopen(argv[1], "rt");
   if (fSensor == NULL) {
     perror("Unable to open the file.");
     exit(1);
   }
-  TSensor vecSensors[DIM_SENS] = makeVec(fSensor);
+  TSensor vecSensors[DIM_SENS] = {0};
+  makeVec(fSensor, vecSensors);
   fclose(fSensor);
   QueryADT query = newQuery();
   insertVector(query, vecSensors);
@@ -36,28 +40,27 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-TSensor * makeVec(FILE * fSensor){
-  TSensor vecSensors[DIM_SENS];
-  char line[100];
+TSensor *makeVec(FILE *fSensor, TSensor vecSensors[]) {
+  char line[MAX_LINE];
   while (!feof(fSensor)) {
-    for (int i = 0; fgets(line, 100, fSensor); i++) {
+    for (int i = 0; fgets(line, MAX_LINE, fSensor); i++) {
       if (i == 0) { // CAMBIAR
         continue;
       } else {
-        char *value = strtok(line, "; ");
+        char *value = strtok(line, ";");
         while (value != NULL) {
           size_t pos = atoi(value);
-          value = strtok(NULL, "; ");
+          value = strtok(NULL, ";");
           vecSensors[pos - 1].Namelen = strlen(value);
           vecSensors[pos - 1].name = malloc(vecSensors[pos - 1].Namelen + 1);
-          if(vecSensors[pos - 1].name == NULL){
+          if (vecSensors[pos - 1].name == NULL) {
             perror("Not able to allocate memory.");
             exit(1);
           }
           vecSensors[pos - 1].name = strcpy(vecSensors[pos - 1].name, value);
-          value = strtok(NULL, "; ");
+          value = strtok(NULL, ";");
           vecSensors[pos - 1].flag = *value;
-          value = strtok(NULL, "; ");
+          value = strtok(NULL, ";");
           vecSensors[pos - 1].Tpedestrians = 0;
         }
       }
@@ -66,26 +69,25 @@ TSensor * makeVec(FILE * fSensor){
   return vecSensors;
 }
 
-Tyear * makeList(FILE * fReadings, TSensor vecSensors[]){
-  Tyear * list;
-  char line2[100];
+Tyear *makeList(FILE *fReadings, TSensor vecSensors[]) {
+  Tyear *list;
+  char line2[MAX_LINE];
   while (!feof(fReadings)) {
-    for (int i = 0; fgets(line2, 100, fReadings); i++) {
+    for (int i = 0; fgets(line2, MAX_LINE, fReadings); i++) {
       if (i == 0) { // CAMBIAR
         continue;
       } else {
-        char *value = strtok(line2, "; ");
+        char *value = strtok(line2, ";");
         while (value != NULL) {
-          char year[4];
-          strcpy(year, value);
-          value = strtok(NULL, "; ");
-          value = strtok(NULL, "; ");
-          value = strtok(NULL, "; ");
-          int day = atoi(value);
-          value = strtok(NULL, "; ");
+          size_t year = atoi(value);
+          value = strtok(NULL, ";");
+          value = strtok(NULL, ";");
+          value = strtok(NULL, ";");
+          enum days day = atoi(value);
+          value = strtok(NULL, ";");
           int ID = atoi(value);
-          value = strtok(NULL, "; ");
-          value = strtok(NULL, "; ");
+          value = strtok(NULL, ";");
+          value = strtok(NULL, ";");
           int pedestrians = atoi(value);
           list = makeRec(list, year, day, ID, pedestrians, vecSensors);
         }
@@ -96,12 +98,13 @@ Tyear * makeList(FILE * fReadings, TSensor vecSensors[]){
 }
 
 /*Función que crea una lista de años con cantidad de peatones*/
-Tyear *makeRec(Tyear *l, char year[], int day, int ID, int pedestrians, TSensor sensors[]) {
-  if (l == NULL || strcmp(l->year, year) > 0) {
+Tyear *makeRec(Tyear *l, size_t year, int day, int ID, int pedestrians,
+               TSensor sensors[]) {
+  if (l == NULL || l->year > year) {
     Tyear *aux = malloc(sizeof(Tyear));
-    if(aux == NULL){
-       perror("Not able to allocate memory.");
-       exit(1);
+    if (aux == NULL) {
+      perror("Not able to allocate memory.");
+      exit(1);
     }
     if (day < 5) {
       aux->Dweek = pedestrians;
@@ -112,10 +115,10 @@ Tyear *makeRec(Tyear *l, char year[], int day, int ID, int pedestrians, TSensor 
     }
     aux->total = pedestrians;
     aux->next = l;
-    strcpy(aux->year, year);
+    aux->year = year;
     return aux;
   }
-  if (strcmp(l->year, year) == 0) {
+  if (l->year == year) {
     if (day < 5) {
       l->Dweek += pedestrians;
     } else {
