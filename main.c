@@ -3,9 +3,10 @@
 #include <ctype.h>
 #include <string.h>
 #include <math.h>
+#include "QueryTAD.h"
 
 int main(void){
-    
+
 }
 
 
