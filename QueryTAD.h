@@ -48,5 +48,5 @@ void insertList(QueryADT q, Tyear *l);
 
 void createList(TSensor sensor[], QueryADT q);
 
-size_t query1(QueryADT q);
+void query1(QueryADT q);
 #endif

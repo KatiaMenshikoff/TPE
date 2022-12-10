@@ -56,7 +56,7 @@ void createList(TSensor sensor[], QueryADT q) {
   q->sensors = ans;
 }
 
-size_t query1(QueryADT q) {
+void query1(QueryADT q) {
   FILE *query1 = fopen("query1.csv", "wt");
   fprintf(query1, "Sensor, Pedestrians\n");
   while (q->sensors != NULL) {
@@ -65,7 +65,6 @@ size_t query1(QueryADT q) {
     q->sensors = q->sensors->tail;
   }
   fclose(query1);
-  return 1; // ALGO
 }
 
 /*size_t query2(QueryADT q) {
