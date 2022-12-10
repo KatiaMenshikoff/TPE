@@ -58,11 +58,13 @@ static Tyear *makeRec(Tyear *l, char year[], int day, int ID, int pedestrians,
   if (l == NULL || strcmp(l->year, year) > 0) {
     Tyear *aux = malloc(sizeof(Tyear));
     if (day < 5) {
-      aux->Dweek += pedestrians;
+      aux->Dweek = pedestrians;
+      aux->Dweekend = 0;
     } else {
-      aux->Dweekend += pedestrians;
+      aux->Dweekend = pedestrians;
+      aux->Dweek = 0;
     }
-    aux->total += pedestrians;
+    aux->total = pedestrians;
     aux->next = l;
     strcpy(aux->year, year);
     return aux;
