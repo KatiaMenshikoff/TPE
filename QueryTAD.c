@@ -43,7 +43,7 @@ TList addRec(TList list, size_t id, long int peds) {
   return list;
 }
 
-TList createList(TSensor sensor[]) {
+void createList(TSensor sensor[], QueryADT q){
   int i;
   TList ans;
   for (i = 0; i < DIM_SENS; i++) {
@@ -53,8 +53,10 @@ TList createList(TSensor sensor[]) {
     perror("Unable to copy information.");
     exit(1);
   }
-  return ans;
+  q->sensors = ans;
 }
+
+
 
 size_t query1(QueryADT q) {
   FILE *query1 = fopen("query1.csv", "wt");
@@ -68,7 +70,7 @@ size_t query1(QueryADT q) {
   return 1; // ALGO
 }
 
-size_t query2(QueryADT q) {
+/*size_t query2(QueryADT q) {
   FILE *query2 = fopen("query2.csv", "wt");
   fprintf(query2, "Year, Weekdays_Count, Weekends_Count, Total_Count\n");
   while (q->first != NULL) {
@@ -95,4 +97,4 @@ size_t query3(QueryADT q) {
   }
   fclose(ansQuery3);
   return 1; // ALGO
-}
+}*/

@@ -45,4 +45,8 @@ QueryADT newQuery();
 void insertVector(QueryADT q, TSensor v[]);
 
 void insertList(QueryADT q, Tyear *l);
+
+void createList(TSensor sensor[], QueryADT q);
+
+size_t query1(QueryADT q);
 #endif

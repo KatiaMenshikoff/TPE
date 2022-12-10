@@ -15,6 +15,8 @@ int main(void) {
   insertVector(query, v);
   Tyear *list = makeYearList(v);
   insertList(query, list);
+  createList(v, query);
+  query1(query);
   return 0;
 }
 
