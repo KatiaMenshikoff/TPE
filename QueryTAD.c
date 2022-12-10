@@ -56,6 +56,7 @@ size_t query1(QueryADT q) {
   fclose(query1);
   return 1; // ALGO
 }
+
 size_t query2(QueryADT q) {
   FILE *query2 = fopen("query2.csv", "wt");
   fprintf(query2, "Year, Weekdays_Count, Weekends_Count, Total_Count\n");
@@ -69,18 +70,18 @@ size_t query2(QueryADT q) {
 }
 
 size_t query3(QueryADT q) {
-  FILE *query3 = fopen("query3.csv", "wt");
-  fprintf(query3, "Year, Pedestrians_Avg");
+  FILE *ansQuery3 = fopen("query3.csv", "wt");
+  fprintf(ansQuery3, "Year, Pedestrians_Avg");
   while (q->first != NULL) {
-    if (q->first->year % 4 == 0) {
-      fprintf(query2, "%s, %.2f\n", q->first->year,
+    if (atoi(q->first->year) % 4 == 0) {
+      fprintf(ansQuery3, "%s, %.2f\n", q->first->year,
               (float)q->first->total / 366.0);
     } else {
-      fprintf(query2, "%s, %.2f\n", q->first->year,
+      fprintf(ansQuery3, "%s, %.2f\n", q->first->year,
               (float)q->first->total / 365.0);
     }
     q->first = q->first->next;
   }
-  fclose(query2);
+  fclose(ansQuery3);
   return 1; // ALGO
 }
