@@ -9,12 +9,12 @@ void makeVec(TSensor ans[]);
 Tyear *makeYearList(TSensor sensors[]);
 
 int main(void) {
-  QueryADT query;
-  query = newQuery();
-  makeVec(query->vecSen); // creamos un vector de sensores
-  query->first =
-      makeYearList(query->vecSen); // creamos una lista ordenada por año
-  query->sensors = createList(query->vecSen);
+  QueryADT query = newQuery();
+  TSensor v[DIM_SENS];
+  makeVec(v);
+  insertVector(query, v);
+  Tyear *list = makeYearList(v);
+  insertList(query, list);
   return 0;
 }
 

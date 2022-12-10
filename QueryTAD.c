@@ -4,21 +4,32 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct node {
-  size_t id;
-  long int pedestrians;
-  struct node *tail;
-} TNode;
-
-typedef TNode *TList;
-
 typedef struct QueryCDT {
   TSensor vecSen[DIM_SENS];
   Tyear *first; // usamos lista para guardar los años en orden.
   TList sensors;
 } QueryCDT;
 
-QueryADT newQuery() { return calloc(1, sizeof(QueryCDT)); }
+QueryADT newQuery() {
+  QueryADT new = calloc(1, sizeof(QueryCDT));
+  return new;
+}
+
+void insertVector(QueryADT q, TSensor v[]) {
+  for (int i = 0; i < DIM_SENS; i++) {
+    q->vecSen[i].flag = v[i].flag;
+    q->vecSen[i].Namelen = v[i].Namelen;
+    q->vecSen[i].name = malloc(q->vecSen[i].Namelen + 1);
+    if (!v) {
+      fprintf(stderr, "Memory allocation failed!\n");
+      exit(1);
+    }
+    strcpy(q->vecSen[i].name, v[i].name);
+    q->vecSen[i].Tpedestrians = v[i].Tpedestrians;
+  }
+}
+
+void insertList(QueryADT q, Tyear *l) { q->first = l; }
 
 TList addRec(TList list, size_t id, long int peds) {
   if (list == NULL || peds > list->pedestrians) {
