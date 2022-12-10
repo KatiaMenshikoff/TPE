@@ -32,6 +32,7 @@ int main(int argc, char *argv[]) {
   query1(query);
   query2(query);
   query3(query);
+  freeQuery(query);
   return 0;
 }
 
@@ -49,6 +50,10 @@ TSensor * makeVec(FILE * fSensor){
           value = strtok(NULL, "; ");
           vecSensors[pos - 1].Namelen = strlen(value);
           vecSensors[pos - 1].name = malloc(vecSensors[pos - 1].Namelen + 1);
+          if(vecSensors[pos - 1].name == NULL){
+            perror("Not able to allocate memory.");
+            exit(1);
+          }
           vecSensors[pos - 1].name = strcpy(vecSensors[pos - 1].name, value);
           value = strtok(NULL, "; ");
           vecSensors[pos - 1].flag = *value;
@@ -94,6 +99,10 @@ Tyear * makeList(FILE * fReadings, TSensor vecSensors[]){
 Tyear *makeRec(Tyear *l, char year[], int day, int ID, int pedestrians, TSensor sensors[]) {
   if (l == NULL || strcmp(l->year, year) > 0) {
     Tyear *aux = malloc(sizeof(Tyear));
+    if(aux == NULL){
+       perror("Not able to allocate memory.");
+       exit(1);
+    }
     if (day < 5) {
       aux->Dweek = pedestrians;
       aux->Dweekend = 0;

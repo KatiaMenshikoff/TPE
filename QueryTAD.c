@@ -21,8 +21,8 @@ void insertVector(QueryADT q, TSensor v[]) {
     q->vecSen[i].Namelen = v[i].Namelen;
     q->vecSen[i].name = malloc(q->vecSen[i].Namelen + 1);
     if (!v) {
-      fprintf(stderr, "Memory allocation failed!\n");
-      exit(1);
+       perror("Not able to allocate memory.");
+       exit(1);
     }
     strcpy(q->vecSen[i].name, v[i].name);
     q->vecSen[i].Tpedestrians = v[i].Tpedestrians;
@@ -34,6 +34,10 @@ void insertList(QueryADT q, Tyear *l) { q->first = l; }
 TList addRec(TList list, size_t id, long int peds) {
   if (list == NULL || peds > list->pedestrians) {
     TList aux = malloc(sizeof(TNode));
+    if(aux == NULL){
+       perror("Not able to allocate memory.");
+       exit(1);
+    }
     aux->id = id;
     aux->pedestrians = peds;
     aux->tail = list;
@@ -99,4 +103,30 @@ void query3(QueryADT q) {
   }
   fclose(ansQuery3);
   closeHTMLTable(table);
+}
+
+static void freeRecYear(Tyear * l){
+  if(l==NULL){
+    return;
+  }
+  freeRecYear(l->next);
+  free(l);
+}
+
+static void freeRecSen(TList l){
+  if(l==NULL){
+    return;
+  }
+  freeRecYear(l->tail);
+  free(l);
+}
+
+void freeQuery(QueryADT q){
+  freeRecSen(q->sensors);
+  freeRecYear(q->first);
+  for(int i = 0; i < DIM_SENS; i++){
+    free(q->vecSen[i].name);
+  }
+  free(q->vecSen);
+  free(q);
 }

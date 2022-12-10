@@ -54,4 +54,6 @@ void query2(QueryADT q);
 
 void query3(QueryADT q);
 
+void freeQuery(QueryADT q);
+
 #endif
