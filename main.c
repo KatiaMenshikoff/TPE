@@ -7,7 +7,7 @@
 
 int main(void){
     /*query = newQuery;
-    query->vecSen = makeVec;
+    query->vecSen = makeVec();
 
 
     */
@@ -36,6 +36,7 @@ TSensor * makeVec(void){
                 value = strtok(NULL, "; ");
                 ans[pos - 1].flag = value;
                 value = strtok(NULL, "; ");
+                ans[pos-1].totalPedes = 0;
             }
         }
     }
