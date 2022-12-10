@@ -5,16 +5,37 @@
 #include <stdlib.h>
 #include <string.h>
 
+Tyear * makeList(FILE * fReadings);
+TSensor * makeVec(FILE * fSensor);
 Tyear *makeRec(Tyear *l, char year[], int day, int ID, int pedestrians, TSensor sensors[]);
 
 int main(int argc, char *argv[]) {
   FILE * fSensor = fopen(argv[1], "rt");
-  char line[100];
   if (fSensor == NULL) {
     perror("Unable to open the file.");
     exit(1);
   }
-  TSensor vecSensors[DIM_SENS];
+  TSensor vecSensors[DIM_SENS] = makeVec(fSensor);
+  fclose(fSensor);
+  QueryADT query = newQuery();
+  insertVector(query, vecSensors);
+  FILE *fReadings;
+  fReadings = fopen(argv[2], "rt");
+  if (fReadings == NULL) {
+    perror("Unable to open the file.");
+    exit(1);
+  }
+  Tyear *list = makeList(fReadings);
+  fclose(fReadings);
+  insertList(query, list);
+  createList(vecSensors, query);
+  query1(query);
+  return 0;
+}
+
+TSensor * makeVec(FILE * fSensor){
+  TSensor * vecSensors[DIM_SENS];
+  char line[100];
   while (!feof(fSensor)) {
     for (int i = 0; fgets(line, 100, fSensor); i++) {
       if (i == 0) { // CAMBIAR
@@ -35,19 +56,11 @@ int main(int argc, char *argv[]) {
       }
     }
   }
-  fclose(fSensor);
+  return vecSensors;
+}
 
-  QueryADT query = newQuery();
-  insertVector(query, vecSensors);
-
-  Tyear *list;
-  FILE *fReadings;
-  fReadings = fopen(argv[2], "rt");
+Tyear * makeList(FILE * fReadings){
   char line2[100];
-  if (fReadings == NULL) {
-    perror("Unable to open the file.");
-    exit(1);
-  }
   while (!feof(fReadings)) {
     for (int i = 0; fgets(line2, 100, fReadings); i++) {
       if (i == 0) { // CAMBIAR
@@ -71,16 +84,7 @@ int main(int argc, char *argv[]) {
       }
     }
   }
-  fclose(fReadings);
-
-  insertList(query, list);
-  createList(vecSensors, query);
-  query1(query);
-  return 0;
 }
-
-
-
 
 /*Función que crea una lista de años con cantidad de peatones*/
 Tyear *makeRec(Tyear *l, char year[], int day, int ID, int pedestrians, TSensor sensors[]) {
