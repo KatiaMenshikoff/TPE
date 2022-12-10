@@ -49,7 +49,8 @@ TSensor *makeVec(void) {
 }
 
 /*Función que crea una lista de años con cantidad de peatones*/
-static Tyear *makeRec(Tyear *l, char year[], int day, int ID, int pedestrians) {
+static Tyear *makeRec(Tyear *l, char year[], int day, int ID, int pedestrians,
+                      TSensor sensors[]) {
   if (l == NULL || strcmp(l->year, year) > 0) {
     Tyear *aux = malloc(sizeof(Tyear));
     if (day < 5) {
@@ -71,11 +72,11 @@ static Tyear *makeRec(Tyear *l, char year[], int day, int ID, int pedestrians) {
     l->total += pedestrians;
     return l;
   }
-  l->next = makeRec(l->next, year, day, ID, pedestrians);
+  l->next = makeRec(l->next, year, day, ID, pedestrians, sensors);
   return l;
 }
 
-Tyear *makeYearList() {
+Tyear *makeYearList(TSensor sensors[]) {
   Tyear *new;
   FILE *fReadings;
   fReadings = fopen("sensor.csv", "rt");
@@ -102,7 +103,7 @@ Tyear *makeYearList() {
           value = strtok(NULL, "; ");
           value = strtok(NULL, "; ");
           int pedestrians = atoi(value);
-          new = makeRec(new, year, day, ID, pedestrians);
+          new = makeRec(new, year, day, ID, pedestrians, sensors);
         }
       }
     }

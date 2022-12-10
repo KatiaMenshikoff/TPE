@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct QueryCDT *QueryADT;
+
 typedef enum days {
   Monday = 0,
   Tuesday,
@@ -28,14 +30,6 @@ typedef struct year {
   long total;
   struct year *next; // siguiente año porque vamos a armar una lista de años.
 } Tyear;
-
-typedef struct QueryCDT {
-  TSensor *vecSen;
-  Tyear *first;         // usamos lista para guardar los años en orden.
-  TSensor *firstSensor; // lista de sensores ordenados por cantidad de peatones.
-} QueryCDT;
-
-typedef QueryCDT *QueryADT;
 
 QueryADT newQuery();
 #endif
