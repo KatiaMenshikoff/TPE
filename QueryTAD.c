@@ -45,7 +45,7 @@ TList createList(TSensor sensor[]) {
   return ans;
 }
 
-size_t *query1(QueryADT q) {
+size_t query1(QueryADT q) {
   FILE *query1 = fopen("query1.csv", "wt");
   fprintf(query1, "Sensor, Pedestrians\n");
   while (q->sensors != NULL) {
@@ -54,9 +54,9 @@ size_t *query1(QueryADT q) {
     q->sensors = q->sensors->tail;
   }
   fclose(query1);
-  return; // ALGO
+  return 1; // ALGO
 }
-size_t *query2(QueryADT q) {
+size_t query2(QueryADT q) {
   FILE *query2 = fopen("query2.csv", "wt");
   fprintf(query2, "Year, Weekdays_Count, Weekends_Count, Total_Count\n");
   while (q->first != NULL) {
@@ -65,10 +65,10 @@ size_t *query2(QueryADT q) {
     q->first = q->first->next;
   }
   fclose(query2);
-  return; // ALGO
+  return 1; // ALGO
 }
 
-size_t *query3(QueryADT q) {
+size_t query3(QueryADT q) {
   FILE *query3 = fopen("query3.csv", "wt");
   fprintf(query3, "Year, Pedestrians_Avg");
   while (q->first != NULL) {
@@ -82,5 +82,5 @@ size_t *query3(QueryADT q) {
     q->first = q->first->next;
   }
   fclose(query2);
-  return; // ALGO
+  return 1; // ALGO
 }
