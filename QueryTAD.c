@@ -58,49 +58,45 @@ void createList(TSensor sensor[], QueryADT q) {
 
 void query1(QueryADT q) {
   FILE *query1 = fopen("query1.csv", "wt");
+  htmlTable table = newTable("query1.html", 2, "Sensor", "Pedestrians");
   fprintf(query1, "Sensor, Pedestrians\n");
   while (q->sensors != NULL) {
     fprintf(query1, "%s, %ld\n", q->vecSen[q->sensors->id - 1].name,
             q->sensors->pedestrians);
+    addHTMLRow(table, q->vecSen[q->sensors->id - 1].name, q->sensors->pedestrians);
     q->sensors = q->sensors->tail;
   }
+  closeHTMLTable(table);
   fclose(query1);
 }
 
-/*size_t query2(QueryADT q) {
+void query2(QueryADT q) {
   FILE *query2 = fopen("query2.csv", "wt");
-  fprintf(query2, "Year, Weekdays_Count, Weekends_Count, Total_Count\n");
+  htmlTable table = newTable("query2.html", 4, "Year", "Weekdays Count", "Weekends Count", "Total Count");
+  fprintf(query2, "Year, Weekdays Count, Weekends Count, Total Count\n");
   while (q->first != NULL) {
-    fprintf(query2, "%s, %ld, %ld, %ld\n", q->first->year, q->first->Dweek,
-            q->first->Dweekend, q->first->total);
+    fprintf(query2, "%s, %ld, %ld, %ld\n", q->first->year, q->first->Dweek, q->first->Dweekend, q->first->total);
+    addHTMLRow(table, q->first->year, q->first->Dweek, q->first->Dweekend, q->first->total);
     q->first = q->first->next;
   }
   fclose(query2);
-  return 1; // ALGO
+  closeHTMLTable(table);
 }
 
-size_t query3(QueryADT q) {
+void query3(QueryADT q) {
   FILE *ansQuery3 = fopen("query3.csv", "wt");
-  fprintf(ansQuery3, "Year, Pedestrians_Avg");
+  htmlTable table = newTable("query2.html", 2, "Year", "Pedestrians Avg");
+  fprintf(ansQuery3, "Year, Pedestrians Avg");
   while (q->first != NULL) {
     if (atoi(q->first->year) % 4 == 0) {
-      fprintf(ansQuery3, "%s, %.2f\n", q->first->year,
-              (float)q->first->total / 366.0);
+      fprintf(ansQuery3, "%s, %.2f\n", q->first->year, (float)q->first->total / 366.0);
+      addHTMLRow(table, q->first->year,(float)q->first->total / 366.0);
     } else {
-      fprintf(ansQuery3, "%s, %.2f\n", q->first->year,
-              (float)q->first->total / 365.0);
+      fprintf(ansQuery3, "%s, %.2f\n", q->first->year,(float)q->first->total / 365.0);
+      addHTMLRow(table, q->first->year, (float)q->first->total / 365.0);
     }
     q->first = q->first->next;
   }
   fclose(ansQuery3);
-  return 1; // ALGO
-}*/
-
-/*
- htmlTable table = newTable("cTableTest.html", 2, "Column 1", "Column 2");
-
-    for(int i = 0; i < 10; i++) {
-        addHTMLRow(table, "Value 1", "Value 2");
-    }
-    closeHTMLTable(table);
- */
+  closeHTMLTable(table);
+}

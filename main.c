@@ -30,6 +30,8 @@ int main(int argc, char *argv[]) {
   insertList(query, list);
   createList(vecSensors, query);
   query1(query);
+  query2(query);
+  query3(query);
   return 0;
 }
 
@@ -60,6 +62,7 @@ TSensor * makeVec(FILE * fSensor){
 }
 
 Tyear * makeList(FILE * fReadings){
+  Tyear * list;
   char line2[100];
   while (!feof(fReadings)) {
     for (int i = 0; fgets(line2, 100, fReadings); i++) {
@@ -84,6 +87,7 @@ Tyear * makeList(FILE * fReadings){
       }
     }
   }
+  return list;
 }
 
 /*Función que crea una lista de años con cantidad de peatones*/
@@ -114,41 +118,3 @@ Tyear *makeRec(Tyear *l, char year[], int day, int ID, int pedestrians, TSensor 
   l->next = makeRec(l->next, year, day, ID, pedestrians, sensors);
   return l;
 }
-
-Tyear *makeYearList(TSensor sensors[]) {
-  Tyear *list;
-  FILE *fReadings;
-  fReadings = fopen("sensor.csv", "rt");
-  char line[100];
-  if (fReadings == NULL) {
-    perror("Unable to open the file.");
-    exit(1);
-  }
-  while (!feof(fReadings)) {
-    for (int i = 0; fgets(line, 100, fReadings); i++) {
-      if (i == 0) { // CAMBIAR
-        continue;
-      } else {
-        char *value = strtok(line, "; ");
-        while (value != NULL) {
-          char year[4];
-          strcpy(year, value);
-          value = strtok(NULL, "; ");
-          value = strtok(NULL, "; ");
-          value = strtok(NULL, "; ");
-          int day = atoi(value);
-          value = strtok(NULL, "; ");
-          int ID = atoi(value);
-          value = strtok(NULL, "; ");
-          value = strtok(NULL, "; ");
-          int pedestrians = atoi(value);
-          list = makeRec(list, year, day, ID, pedestrians, sensors);
-        }
-      }
-    }
-  }
-  fclose(fReadings);
-  return list;
-}
-
-
