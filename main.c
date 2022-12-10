@@ -6,7 +6,11 @@
 #include "QueryTAD.h"
 
 int main(void){
+    /*query = newQuery;
+    query->vecSen = makeVec;
 
+
+    */
 }
 
 
