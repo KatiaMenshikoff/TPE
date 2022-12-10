@@ -1,27 +1,41 @@
 #ifndef QUERYTAD
 #define QUERYTAD
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-typedef enum days{Monday = 0, Tuesday, Wednesday, Thursday, Friday, Saturday,Sunday} day;
-
-typedef QueryCDT * QueryADT;
+typedef enum days {
+  Monday = 0,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+  Saturday,
+  Sunday
+} day;
 
 typedef struct sensor {
-    char * name; 
-    char flag;
-    size_t Namelen;
-    long Tpedestrians;
-}TSensor; // incluimos esta estructura en el .h para usarla tanto en el main como en el .c
+  char *name;
+  char flag;
+  size_t Namelen;
+  long Tpedestrians;
+} TSensor; // incluimos esta estructura en el .h para usarla tanto en el main
+           // como en el .c
 
+typedef struct year {
+  char year[4];
+  long Dweek;    // peatones anuales en día de semana.
+  long Dweekend; // peatones anuales en fin de semana.
+  long total;
+  struct year *next; // siguiente año porque vamos a armar una lista de años.
+} Tyear;
 
-typedef struct year{
-    char year[4];
-    long Dweek; // peatones anuales en día de semana.
-    long Dweekend; // peatones anuales en fin de semana.
-    long total;
-    struct year * next; // siguiente año porque vamos a armar una lista de años.
-}Tyear;
+typedef struct QueryCDT {
+  TSensor *vecSen;
+  Tyear *first;         // usamos lista para guardar los años en orden.
+  TSensor *firstSensor; // lista de sensores ordenados por cantidad de peatones.
+} QueryCDT;
+
+typedef QueryCDT *QueryADT;
 
 QueryADT newQuery();
 #endif
