@@ -43,7 +43,7 @@ TList addRec(TList list, size_t id, long int peds) {
   return list;
 }
 
-void createList(TSensor sensor[], QueryADT q){
+void createList(TSensor sensor[], QueryADT q) {
   int i;
   TList ans;
   for (i = 0; i < DIM_SENS; i++) {
@@ -55,8 +55,6 @@ void createList(TSensor sensor[], QueryADT q){
   }
   q->sensors = ans;
 }
-
-
 
 size_t query1(QueryADT q) {
   FILE *query1 = fopen("query1.csv", "wt");
@@ -98,3 +96,12 @@ size_t query3(QueryADT q) {
   fclose(ansQuery3);
   return 1; // ALGO
 }*/
+
+/*
+ htmlTable table = newTable("cTableTest.html", 2, "Column 1", "Column 2");
+
+    for(int i = 0; i < 10; i++) {
+        addHTMLRow(table, "Value 1", "Value 2");
+    }
+    closeHTMLTable(table);
+ */
