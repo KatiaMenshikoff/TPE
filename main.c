@@ -5,18 +5,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+void makeVec(TSensor ans[]);
+Tyear *makeYearList(TSensor sensors[]);
+
 int main(void) {
   QueryADT query;
   query = newQuery();
-  query->vecSen = makeVec();  //creamos un vector de sensores
-  query->first = makeYearList(query->vecSen);  //creamos una lista ordenada por año
+  makeVec(query->vecSen); // creamos un vector de sensores
+  query->first =
+      makeYearList(query->vecSen); // creamos una lista ordenada por año
   query->sensors = createList(query->vecSen);
   return 0;
 }
 
 /*Función que crea un vector de sensores ordenados por ID*/
-TSensor *makeVec(void) {
-  TSensor ans[DIM_SENS];
+void makeVec(TSensor ans[]) {
   FILE *fSensor;
   fSensor = fopen("sensor.csv", "rt");
   char line[100];
@@ -26,7 +29,7 @@ TSensor *makeVec(void) {
   }
   while (!feof(fSensor)) {
     for (int i = 0; fgets(line, 100, fSensor); i++) {
-      if (i == 0) {  //CAMBIAR
+      if (i == 0) { // CAMBIAR
         continue;
       } else {
         char *value = strtok(line, "; ");
@@ -45,7 +48,6 @@ TSensor *makeVec(void) {
     }
   }
   fclose(fSensor);
-  return ans;
 }
 
 /*Función que crea una lista de años con cantidad de peatones*/
@@ -87,7 +89,7 @@ Tyear *makeYearList(TSensor sensors[]) {
   }
   while (!feof(fReadings)) {
     for (int i = 0; fgets(line, 100, fReadings); i++) {
-      if (i == 0) {  //CAMBIAR
+      if (i == 0) { // CAMBIAR
         continue;
       } else {
         char *value = strtok(line, "; ");
