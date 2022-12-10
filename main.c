@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-Tyear * makeList(FILE * fReadings);
+Tyear * makeList(FILE * fReadings, TSensor vecSensors[]);
 TSensor * makeVec(FILE * fSensor);
 Tyear *makeRec(Tyear *l, char year[], int day, int ID, int pedestrians, TSensor sensors[]);
 
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     perror("Unable to open the file.");
     exit(1);
   }
-  Tyear *list = makeList(fReadings);
+  Tyear *list = makeList(fReadings, vecSensors);
   fclose(fReadings);
   insertList(query, list);
   createList(vecSensors, query);
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 }
 
 TSensor * makeVec(FILE * fSensor){
-  TSensor * vecSensors[DIM_SENS];
+  TSensor vecSensors[DIM_SENS];
   char line[100];
   while (!feof(fSensor)) {
     for (int i = 0; fgets(line, 100, fSensor); i++) {
@@ -61,7 +61,7 @@ TSensor * makeVec(FILE * fSensor){
   return vecSensors;
 }
 
-Tyear * makeList(FILE * fReadings){
+Tyear * makeList(FILE * fReadings, TSensor vecSensors[]){
   Tyear * list;
   char line2[100];
   while (!feof(fReadings)) {
