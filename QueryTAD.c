@@ -89,42 +89,52 @@ void query1(QueryADT q) {
 
 void query2(QueryADT q) {
   FILE *query2 = fopen("query2.csv", "wt");
-  htmlTable table = newTable("query2.html", 4, "Year", "Weekdays Count",
+  htmlTable table2 = newTable("query2.html", 4, "Year", "Weekdays Count",
                              "Weekends Count", "Total Count");
   fprintf(query2, "Year, Weekdays Count, Weekends Count, Total Count\n");
-  while (q->first != NULL) {
-    fprintf(query2, "%li, %li, %li, %li\n", q->first->year, q->first->Dweek,
-            q->first->Dweekend, q->first->total);
+  Tyear * aux = q->first;
+  while (aux != NULL) {
+    fprintf(query2, "%li, %li, %li, %li\n", aux->year, aux->Dweek,
+            aux->Dweekend, aux->total);
     char a[MAX], b[MAX], c[MAX], d[MAX];
-    sprintf(a,"%li",q->first->year);
-    sprintf(b,"%li",q->first->Dweek);
-    sprintf(c,"%li",q->first->Dweekend);
-    sprintf(d,"%li",q->first->total);
-    addHTMLRow(table, a,b,c,d);
-    q->first = q->first->next;
+    sprintf(a,"%li",aux->year);
+    sprintf(b,"%li",aux->Dweek);
+    sprintf(c,"%li",aux->Dweekend);
+    sprintf(d,"%li",aux->total);
+    addHTMLRow(table2, a,b,c,d);
+    aux = aux->next;
   }
   fclose(query2);
-  closeHTMLTable(table);
+  closeHTMLTable(table2);
 }
 
 void query3(QueryADT q) {
   FILE *ansQuery3 = fopen("query3.csv", "wt");
-  htmlTable table = newTable("query2.html", 2, "Year", "Pedestrians Avg");
+  htmlTable table3 = newTable("query3.html", 2, "Year", "Pedestrians Avg");
   fprintf(ansQuery3, "Year, Pedestrians Avg");
-  while (q->first != NULL) {
-    if ((q->first->year) % 4 == 0) {
-      fprintf(ansQuery3, "%lu, %.2f\n", q->first->year,
-              (float)q->first->total / 366.0);
-      addHTMLRow(table, q->first->year, (float)q->first->total / 366.0);
+  Tyear * aux = q->first;
+  while (aux != NULL) {
+    if ((aux->year) % 4 == 0) {
+      float i = (float)aux->total / 366.0;
+      printf("%f\n",i);
+      fprintf(ansQuery3, "%li, %.2f\n", aux->year,i);
+      char y[MAX], a[MAX];
+      sprintf(y,"%li",aux->year);
+      sprintf(a,"%.2f",i);
+      addHTMLRow(table3, y, a);
     } else {
-      fprintf(ansQuery3, "%lu, %.2f\n", q->first->year,
-              (float)q->first->total / 365.0);
-      addHTMLRow(table, q->first->year, (float)q->first->total / 365.0);
+      float j = (float)aux->total / 365.0;
+      printf("%f",j);
+      fprintf(ansQuery3, "%li, %.2f\n", aux->year,j);
+      char y2[MAX], a2[MAX];
+      sprintf(y2,"%li",aux->year);
+      sprintf(a2,"%.2f",j);
+      addHTMLRow(table3,y2, a2);
     }
-    q->first = q->first->next;
+    aux = aux->next;
   }
   fclose(ansQuery3);
-  closeHTMLTable(table);
+  closeHTMLTable(table3);
 }
 
 static void freeRecYear(Tyear *l) {
