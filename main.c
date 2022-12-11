@@ -13,8 +13,7 @@
 
 Tyear *makeList(FILE *fReadings, TSensor vecSensors[]);
 TSensor *makeVec(FILE *fSensor, TSensor vecSensors[]);
-Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,
-               TSensor sensors[]);
+Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians);
 
 int main(int argc, char *argv[]) {
   FILE *fSensor = fopen(argv[1], "rt");
@@ -86,7 +85,6 @@ Tyear * makeList(FILE *fReadings, TSensor vecSensors[]) {
         continue;
       } else {
         char *value = strtok(line2, ";");
-        printf("%s\n", value);
         while (value != NULL) {
           size_t year = atoi(value);
           printf("YEAR: %lu\t", year);
@@ -102,7 +100,8 @@ Tyear * makeList(FILE *fReadings, TSensor vecSensors[]) {
           value = strtok(NULL, ";");
           int pedestrians = atoi(value);
           printf("PED: %i\n", pedestrians);
-          list = makeRec(list, year, day, ID, pedestrians, vecSensors);
+          list = makeRec(list, year, day, ID, pedestrians);
+          value = strtok(NULL, ";");
         }
       }
     }
@@ -111,7 +110,7 @@ Tyear * makeList(FILE *fReadings, TSensor vecSensors[]) {
 }
 
 /*Función que crea una lista de años con cantidad de peatones*/
-Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,TSensor sensors[]) {
+Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians) {
   if (l == NULL || l->year > year) {
     Tyear *aux = malloc(sizeof(Tyear));
     if (aux == NULL) {
@@ -139,6 +138,6 @@ Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,TSensor 
     l->total += pedestrians;
     return l;
   }
-  l->next = makeRec(l->next, year, day, ID, pedestrians, sensors);
+  l->next = makeRec(l->next, year, day, ID, pedestrians);
   return l;
 }
