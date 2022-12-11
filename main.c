@@ -11,8 +11,8 @@
 
 //enum week {Monday = 0,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday};
 
-Tyear *makeList(FILE *fReadings, TSensor vecSensors[]);
-void makeVec(FILE *fSensor, TSensor vecSensors[]);
+Tyear *makeList(FILE *fReadings, TSensor * vecSensors[]);
+TSensor * makeVec(FILE *fSensor);
 Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians);
 
 int main(int argc, char *argv[]) {
@@ -25,8 +25,14 @@ int main(int argc, char *argv[]) {
   }
   QueryADT query = newQuery();
   TSensor * vecSensors = calloc(DIM_SENS, sizeof(struct sensor)); 
-  makeVec(fSensor, vecSensors);
-  Tyear * list = makeList(fReadings, vecSensors);
+  vecSensors = makeVec(fSensor);
+  Tyear * list = makeList(fReadings, &vecSensors);
+
+  /*for(int i = 0; i<DIM_SENS; i++){
+      printf("%s\t %i \t",vecSensors[i].name, i+1);
+      printf("%li\n", vecSensors[i].Tpedestrians);
+  } */
+
   insertVector(query, vecSensors);
   insertList(query, list);
   createList(query, vecSensors);
@@ -42,8 +48,13 @@ static bool dayToNum(char s[]){
   return s[0] == 'S' || s[0] == 's';
 }
 
-void makeVec(FILE *fSensor, TSensor vecSensors[]) {
+TSensor * makeVec(FILE *fSensor) {
   char line[MAX_LINE];
+  TSensor * vecSensors = calloc(DIM_SENS,sizeof(TSensor));
+  if(vecSensors==NULL){
+    perror("Unable to allocate memory.");
+    exit(1);
+  }
   while (!feof(fSensor)) {
     for (int i = 0; fgets(line, MAX_LINE, fSensor); i++) {
       if (i == 0) { 
@@ -67,9 +78,12 @@ void makeVec(FILE *fSensor, TSensor vecSensors[]) {
       }
     }
   }
+  return vecSensors;
 }
 
-Tyear * makeList(FILE *fReadings, TSensor vecSensors[]) {
+
+
+Tyear * makeList(FILE *fReadings, TSensor * vecSensors[]) {
   Tyear *list = NULL;
   char line2[MAX_LINE];
   while (!feof(fReadings)) {
@@ -93,7 +107,7 @@ Tyear * makeList(FILE *fReadings, TSensor vecSensors[]) {
           value = strtok(NULL, ";");
           int pedestrians = atoi(value);
           //printf("PED: %i\n", pedestrians);
-          vecSensors[ID - 1].Tpedestrians += pedestrians;
+          (*vecSensors)[ID - 1].Tpedestrians += pedestrians;
           list = makeRec(list, year, day, ID, pedestrians);
           value = strtok(NULL, ";");
         }
