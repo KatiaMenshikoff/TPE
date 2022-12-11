@@ -14,6 +14,9 @@ Tyear *makeList(FILE *fReadings, TSensor *vecSensors[]);
 TSensor *makeVec(FILE *fSensor, TSensor * vecSensors);
 Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,
                char flag);
+void q1(QueryADT q);
+void q2(QueryADT q);
+void q3(QueryADT q);
 
 int main(int argc, char *argv[]) {
   FILE *fSensor = fopen(argv[1], "rt");
@@ -42,9 +45,9 @@ int main(int argc, char *argv[]) {
   insertList(query, list);
   fclose(fSensor);
   fclose(fReadings);
-  Query1(query);
-  Query2(query);
-  Query3(query);
+  q1(query);
+  q2(query);
+  q3(query);
   freeQuery(query);
 }
 
@@ -151,4 +154,32 @@ Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,
   }
   l->next = makeRec(l->next, year, day, ID, pedestrians, flag);
   return l;
+}
+
+void q1(QueryADT q){
+    FILE *query1 = fopen("query1.csv", "wt");
+    htmlTable table = newTable("query1.html", 2, "Sensor", "Pedestrians");
+    fprintf(query1, "Sensor, Pedestrians\n");
+    Query1(q, query1, table);
+    closeHTMLTable(table);
+    fclose(query1);
+}
+
+void q2(QueryADT q) {
+  FILE *query2 = fopen("query2.csv", "wt");
+  htmlTable table2 = newTable("query2.html", 4, "Year", "Weekdays Count",
+                              "Weekends Count", "Total Count");
+  fprintf(query2, "Year, Weekdays Count, Weekends Count, Total Count\n");
+  Query2(q, query2, table2);
+  fclose(query2);
+  closeHTMLTable(table2);
+}
+
+void q3(QueryADT q){
+  FILE *query3 = fopen("query3.csv", "wt");
+  htmlTable table3 = newTable("query3.html", 2, "Year", "Pedestrians Avg");
+  fprintf(query3, "Year, Pedestrians Avg\n");
+  Query3(q, query3, table3);
+  fclose(query3);
+  closeHTMLTable(table3);
 }

@@ -1,5 +1,4 @@
 #include "QueryTAD.h"
-#include "htmlTable.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -78,10 +77,7 @@ void createList(QueryADT q, TSensor sensor[]) {
   q->sensors = ans;
 }
 
-void Query1(QueryADT q) {
-  FILE *query1 = fopen("query1.csv", "wt");
-  htmlTable table = newTable("query1.html", 2, "Sensor", "Pedestrians");
-  fprintf(query1, "Sensor, Pedestrians\n");
+void Query1(QueryADT q, FILE * query1, htmlTable table) {
   while (q->sensors != NULL) {
     fprintf(query1, "%s, %ld\n", q->vecSen[q->sensors->id - 1].name,
             q->sensors->pedestrians);
@@ -90,15 +86,9 @@ void Query1(QueryADT q) {
     addHTMLRow(table, q->vecSen[q->sensors->id - 1].name, c);
     q->sensors = q->sensors->tail;
   }
-  closeHTMLTable(table);
-  fclose(query1);
 }
 
-void Query2(QueryADT q) {
-  FILE *query2 = fopen("query2.csv", "wt");
-  htmlTable table2 = newTable("query2.html", 4, "Year", "Weekdays Count",
-                              "Weekends Count", "Total Count");
-  fprintf(query2, "Year, Weekdays Count, Weekends Count, Total Count\n");
+void Query2(QueryADT q, FILE * query2, htmlTable table2) {
   Tyear *aux = q->first;
   while (aux != NULL) {
     fprintf(query2, "%li, %li, %li, %li\n", aux->year, aux->Dweek,
@@ -111,14 +101,9 @@ void Query2(QueryADT q) {
     addHTMLRow(table2, a, b, c, d);
     aux = aux->next;
   }
-  fclose(query2);
-  closeHTMLTable(table2);
 }
 
-void Query3(QueryADT q) {
-  FILE *query3 = fopen("query3.csv", "wt");
-  htmlTable table3 = newTable("query3.html", 2, "Year", "Pedestrians Avg");
-  fprintf(query3, "Year, Pedestrians Avg\n");
+void Query3(QueryADT q,FILE * query3, htmlTable table3) {
   Tyear *aux = q->first;
   while (aux != NULL) {
     if ((aux->year) % 4 == 0) {
@@ -138,8 +123,6 @@ void Query3(QueryADT q) {
     }
     aux = aux->next;
   }
-  fclose(query3);
-  closeHTMLTable(table3);
 }
 
 static void freeRecYear(TListYear l) {
