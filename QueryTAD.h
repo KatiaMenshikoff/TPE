@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #define DIM_SENS 86
 
-
 typedef struct sensor {
   char *name;
   char flag;

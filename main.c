@@ -17,21 +17,18 @@ Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians);
 
 int main(int argc, char *argv[]) {
   FILE *fSensor = fopen(argv[1], "rt");
-  if (fSensor == NULL) {
-    perror("Unable to open the file.");
-    exit(1);
-  }
-  TSensor vecSensors[DIM_SENS] = {0};
-  makeVec(fSensor, vecSensors);
-  fclose(fSensor);
-  QueryADT query = newQuery();
-  insertVector(query, vecSensors);
   FILE *fReadings;
   fReadings = fopen(argv[2], "rt");
-  if (fReadings == NULL) {
+  if (fSensor == NULL || fReadings == NULL) {
     perror("Unable to open the file.");
     exit(1);
   }
+  
+  QueryADT query = newQuery();
+  TSensor * vecSensors = calloc(DIM_SENS, sizeof(TSensor)); 
+  vecSensors = makeVec(fSensor, vecSensors);
+  fclose(fSensor);
+  insertVector(query, vecSensors);
   Tyear * list = makeList(fReadings, vecSensors);
   fclose(fReadings);
   insertList(query, list);
@@ -56,7 +53,7 @@ TSensor *makeVec(FILE *fSensor, TSensor vecSensors[]) {
       } else {
         char *value = strtok(line, ";");
         while (value != NULL) {
-          size_t pos =atoi(value);
+          size_t pos = atoi(value);
           value = strtok(NULL, ";");
           vecSensors[pos - 1].Namelen = strlen(value);
           vecSensors[pos - 1].name = malloc(vecSensors[pos - 1].Namelen + 1);
@@ -68,7 +65,6 @@ TSensor *makeVec(FILE *fSensor, TSensor vecSensors[]) {
           value = strtok(NULL, ";");
           vecSensors[pos - 1].flag = *value;
           value = strtok(NULL, ";");
-          vecSensors[pos - 1].Tpedestrians = 0;
         }
       }
     }
@@ -100,6 +96,7 @@ Tyear * makeList(FILE *fReadings, TSensor vecSensors[]) {
           value = strtok(NULL, ";");
           int pedestrians = atoi(value);
           //printf("PED: %i\n", pedestrians);
+          vecSensors[ID - 1].Tpedestrians += pedestrians;
           list = makeRec(list, year, day, ID, pedestrians);
           value = strtok(NULL, ";");
         }
