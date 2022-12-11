@@ -80,16 +80,16 @@ Tyear *makeList(FILE *fReadings, TSensor vecSensors[]) {
       } else {
         char *value = strtok(line2, ";");
         while (value != NULL) {
-          size_t year = atoi(value);
+          size_t year = (size_t)value;
           value = strtok(NULL, ";");
           value = strtok(NULL, ";");
           value = strtok(NULL, ";");
-          enum week day = atoi(value);
+          enum week day = (size_t)value;
           value = strtok(NULL, ";");
-          int ID = atoi(value);
+          int ID = (size_t)value;
           value = strtok(NULL, ";");
           value = strtok(NULL, ";");
-          int pedestrians = atoi(value);
+          int pedestrians = (size_t)value;
           list = makeRec(list, year, day, ID, pedestrians, vecSensors);
         }
       }
