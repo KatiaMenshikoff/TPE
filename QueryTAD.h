@@ -36,8 +36,6 @@ void insertVector(QueryADT q, TSensor v[]);
 
 void insertList(QueryADT q, Tyear *l);
 
-void insertSensor(QueryADT q, TList list);
-
 void createList(QueryADT q,TSensor sensor[]);
 
 void query1(QueryADT q);
@@ -47,5 +45,9 @@ void query2(QueryADT q);
 void query3(QueryADT q);
 
 void freeQuery(QueryADT q);
+
+void freeRecSen(TList l);
+
+void freeRecYear(Tyear *l);
 
 #endif

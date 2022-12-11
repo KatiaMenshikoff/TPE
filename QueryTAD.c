@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #define MAX 15
 
 typedef struct QueryCDT {
@@ -10,11 +11,27 @@ typedef struct QueryCDT {
   Tyear *first; // usamos lista para guardar los años en orden.
   TList sensors;
 } QueryCDT;
-
 QueryADT newQuery() {
   QueryADT new = calloc(1, sizeof(QueryCDT));
   return new;
 }
+
+void freeRecYear(Tyear *l) {
+  if (l == NULL) {
+    return;
+  }
+  freeRecYear(l->next);
+  free(l);
+}
+
+void freeRecSen(TList l) {
+  if (l == NULL) {
+    return;
+  }
+  freeRecSen(l->tail);
+  free(l);
+}
+
 
 void insertVector(QueryADT q, TSensor v[]) {
   for (int i = 0; i < DIM_SENS; i++) {
@@ -37,11 +54,11 @@ void insertList(QueryADT q, Tyear *l) {
   q->first = l; 
 }
 
-TList addRec(TList list, size_t id, long int peds, char flag) { //NO ESTA COPIANDO
-  if(flag == 'R' || flag==0){ // si el flag esta en 0, el espacio esta vacío.
+static TList addRec(TList list, size_t id, long int peds, TSensor sensors[]) { //NO ESTA COPIANDO
+  if(sensors[id - 1].flag == 'R' || sensors[id -1].flag==0){ // si el flag esta en 0, el espacio esta vacío.
     return list; //si el sensor este inactivo no quiero que aparezca en la fila.
   }
-  if (list == NULL || peds > list->pedestrians) {
+  if (list == NULL || peds > list->pedestrians|| (peds == list->pedestrians && strcasecmp(sensors[id - 1].name, sensors[list->id - 1].name) < 0)) {
     TList aux = malloc(sizeof(TNode));
     if (aux == NULL) {
       perror("Not able to allocate memory.");
@@ -52,17 +69,15 @@ TList addRec(TList list, size_t id, long int peds, char flag) { //NO ESTA COPIAN
     aux->tail = list;
     return aux;
   }
-  list->tail = addRec(list->tail, id, peds, flag);
+  list->tail = addRec(list->tail, id, peds, sensors);
   return list;
 }
-
-
 
 void createList(QueryADT q, TSensor sensor[]) {
   int i;
   TList ans = NULL;
   for (i = 0; i < DIM_SENS; i++) {
-    ans = addRec(ans, (i + 1), sensor[i].Tpedestrians, sensor[i].flag);  //NO GUARDA EN ANS
+    ans = addRec(ans, (i + 1), sensor[i].Tpedestrians, sensor);  //NO GUARDA EN ANS
   }
   if (ans == NULL) {
     perror("Unable to copy information.");
@@ -111,12 +126,11 @@ void query2(QueryADT q) {
 void query3(QueryADT q) {
   FILE *ansQuery3 = fopen("query3.csv", "wt");
   htmlTable table3 = newTable("query3.html", 2, "Year", "Pedestrians Avg");
-  fprintf(ansQuery3, "Year, Pedestrians Avg");
+  fprintf(ansQuery3, "Year, Pedestrians Avg\n");
   Tyear * aux = q->first;
   while (aux != NULL) {
     if ((aux->year) % 4 == 0) {
       float i = (float)aux->total / 366.0;
-      printf("%f\n",i);
       fprintf(ansQuery3, "%li, %.2f\n", aux->year,i);
       char y[MAX], a[MAX];
       sprintf(y,"%li",aux->year);
@@ -124,7 +138,6 @@ void query3(QueryADT q) {
       addHTMLRow(table3, y, a);
     } else {
       float j = (float)aux->total / 365.0;
-      printf("%f",j);
       fprintf(ansQuery3, "%li, %.2f\n", aux->year,j);
       char y2[MAX], a2[MAX];
       sprintf(y2,"%li",aux->year);
@@ -137,21 +150,6 @@ void query3(QueryADT q) {
   closeHTMLTable(table3);
 }
 
-static void freeRecYear(Tyear *l) {
-  if (l == NULL) {
-    return;
-  }
-  freeRecYear(l->next);
-  free(l);
-}
-
-static void freeRecSen(TList l) {
-  if (l == NULL) {
-    return;
-  }
-  freeRecSen(l->tail);
-  free(l);
-}
 
 void freeQuery(QueryADT q) {
   freeRecSen(q->sensors);

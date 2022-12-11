@@ -13,7 +13,7 @@
 
 Tyear *makeList(FILE *fReadings, TSensor * vecSensors[]);
 TSensor * makeVec(FILE *fSensor);
-Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians);
+Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians, char flag);
 
 int main(int argc, char *argv[]) {
   FILE *fSensor = fopen(argv[1], "rt");
@@ -35,6 +35,11 @@ int main(int argc, char *argv[]) {
   query1(query);
   query2(query);
   query3(query);
+  for (int i = 0; i<DIM_SENS; i++){
+    free(vecSensors[i].name);
+  }
+  free(vecSensors);
+  freeRecYear(list);
   freeQuery(query);
 }
 
@@ -88,21 +93,17 @@ Tyear * makeList(FILE *fReadings, TSensor * vecSensors[]) {
         char *value = strtok(line2, ";");
         while (value != NULL) {
           size_t year = atoi(value);
-          //printf("YEAR: %lu\t", year);
           value = strtok(NULL, ";");
           value = strtok(NULL, ";");
           value = strtok(NULL, ";");
           bool day = dayToNum(value);
-          //printf("DAY: %d\t", day);
           value = strtok(NULL, ";");
           int ID = atoi(value);
-          //printf("ID: %i\t", ID);
           value = strtok(NULL, ";");
           value = strtok(NULL, ";");
           int pedestrians = atoi(value);
-          //printf("PED: %i\n", pedestrians);
           (*vecSensors)[ID - 1].Tpedestrians += pedestrians;
-          list = makeRec(list, year, day, ID, pedestrians);
+          list = makeRec(list, year, day, ID, pedestrians, (*vecSensors)[ID - 1].flag);
           value = strtok(NULL, ";");
         }
       }
@@ -112,7 +113,10 @@ Tyear * makeList(FILE *fReadings, TSensor * vecSensors[]) {
 }
 
 /*Función que crea una lista de años con cantidad de peatones*/
-Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians) {
+Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians, char flag) {
+  if (flag == 'R'){
+    return l;
+  }
   if (l == NULL || l->year > year) {
     Tyear *aux = malloc(sizeof(struct year));
     if (aux == NULL) {
@@ -140,6 +144,6 @@ Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians) {
     l->total += pedestrians;
     return l;
   }
-  l->next = makeRec(l->next, year, day, ID, pedestrians);
+  l->next = makeRec(l->next, year, day, ID, pedestrians, flag);
   return l;
 }
