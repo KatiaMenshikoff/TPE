@@ -12,7 +12,7 @@
 // enum week {Monday = 0,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday};
 
 Tyear *makeList(FILE *fReadings, TSensor *vecSensors[]);
-TSensor *makeVec(FILE *fSensor);
+TSensor *makeVec(FILE *fSensor, TSensor * vecSensors);
 Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,
                char flag);
 
@@ -26,30 +26,33 @@ int main(int argc, char *argv[]) {
   }
   QueryADT query = newQuery();
   TSensor *vecSensors = calloc(DIM_SENS, sizeof(struct sensor));
-  vecSensors = makeVec(fSensor);
+  vecSensors = makeVec(fSensor, vecSensors);
   Tyear *list = makeList(fReadings, &vecSensors);
   insertVector(query, vecSensors);
   insertList(query, list);
   createList(query, vecSensors);
   fclose(fSensor);
   fclose(fReadings);
-  query1(query);
-  query2(query);
-  query3(query);
+
   for (int i = 0; i < DIM_SENS; i++) {
-    free(vecSensors[i].name);
+    if(vecSensors[i].name == NULL){
+      continue;
+    } else{
+        free(vecSensors[i].name);
+    }
   }
   free(vecSensors);
-  // freeRecYear(list);
+  Query1(query);
+  Query2(query);
+  Query3(query);
   freeQuery(query);
-  // free(query);
 }
 
 static bool dayToNum(char s[]) { return s[0] == 'S' || s[0] == 's'; }
 
-TSensor *makeVec(FILE *fSensor) {
+//crea un vector de sensores ordenados por ID.
+TSensor *makeVec(FILE *fSensor,TSensor *vecSensors) {
   char line[MAX_LINE];
-  TSensor *vecSensors = calloc(DIM_SENS, sizeof(TSensor));
   if (vecSensors == NULL) {
     perror("Unable to allocate memory.");
     exit(1);
@@ -80,6 +83,7 @@ TSensor *makeVec(FILE *fSensor) {
   return vecSensors;
 }
 
+//crea una lista de años ordenados de mayor a menor.
 Tyear *makeList(FILE *fReadings, TSensor *vecSensors[]) {
   Tyear *list = NULL;
   char line2[MAX_LINE];
@@ -111,13 +115,13 @@ Tyear *makeList(FILE *fReadings, TSensor *vecSensors[]) {
   return list;
 }
 
-/*Función que crea una lista de años con cantidad de peatones*/
+// Crea la lista de años recursivamente.
 Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,
                char flag) {
   if (flag == 'R') {
     return l;
   }
-  if (l == NULL || l->year > year) {
+  if (l == NULL || l->year < year) {
     Tyear *aux = malloc(sizeof(struct year));
     if (aux == NULL) {
       perror("Unable to allocate memory.");

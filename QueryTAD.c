@@ -12,7 +12,7 @@ typedef struct QueryCDT {
   TList sensors;
 } QueryCDT;
 
-QueryADT newQuery() {
+QueryADT newQuery(void) {
   QueryADT new = calloc(1, sizeof(QueryCDT));
   if (new == NULL) {
     perror("Unable to allocate memory.");
@@ -21,21 +21,6 @@ QueryADT newQuery() {
   return new;
 }
 
-void freeRecYear(TListYear l) {
-  if (l == NULL) {
-    return;
-  }
-  freeRecYear(l->next);
-  free(l);
-}
-
-void freeRecSen(TList l) {
-  if (l == NULL) {
-    return;
-  }
-  freeRecSen(l->tail);
-  free(l);
-}
 
 void insertVector(QueryADT q, TSensor v[]) {
   for (int i = 0; i < DIM_SENS; i++) {
@@ -95,7 +80,7 @@ void createList(QueryADT q, TSensor sensor[]) {
   q->sensors = ans;
 }
 
-void query1(QueryADT q) {
+void Query1(QueryADT q) {
   FILE *query1 = fopen("query1.csv", "wt");
   htmlTable table = newTable("query1.html", 2, "Sensor", "Pedestrians");
   fprintf(query1, "Sensor, Pedestrians\n");
@@ -111,7 +96,7 @@ void query1(QueryADT q) {
   fclose(query1);
 }
 
-void query2(QueryADT q) {
+void Query2(QueryADT q) {
   FILE *query2 = fopen("query2.csv", "wt");
   htmlTable table2 = newTable("query2.html", 4, "Year", "Weekdays Count",
                               "Weekends Count", "Total Count");
@@ -132,22 +117,22 @@ void query2(QueryADT q) {
   closeHTMLTable(table2);
 }
 
-void query3(QueryADT q) {
-  FILE *ansQuery3 = fopen("query3.csv", "wt");
+void Query3(QueryADT q) {
+  FILE *query3 = fopen("query3.csv", "wt");
   htmlTable table3 = newTable("query3.html", 2, "Year", "Pedestrians Avg");
-  fprintf(ansQuery3, "Year, Pedestrians Avg\n");
+  fprintf(query3, "Year, Pedestrians Avg\n");
   Tyear *aux = q->first;
   while (aux != NULL) {
     if ((aux->year) % 4 == 0) {
       float i = (float)aux->total / 366.0;
-      fprintf(ansQuery3, "%li, %.2f\n", aux->year, i);
+      fprintf(query3, "%li, %.2f\n", aux->year, i);
       char y[MAX], a[MAX];
       sprintf(y, "%li", aux->year);
       sprintf(a, "%.2f", i);
       addHTMLRow(table3, y, a);
     } else {
       float j = (float)aux->total / 365.0;
-      fprintf(ansQuery3, "%li, %.2f\n", aux->year, j);
+      fprintf(query3, "%li, %.2f\n", aux->year, j);
       char y2[MAX], a2[MAX];
       sprintf(y2, "%li", aux->year);
       sprintf(a2, "%.2f", j);
@@ -155,15 +140,35 @@ void query3(QueryADT q) {
     }
     aux = aux->next;
   }
-  fclose(ansQuery3);
+  fclose(query3);
   closeHTMLTable(table3);
+}
+
+static void freeRecYear(TListYear l) {
+  if (l == NULL) {
+    return;
+  }
+  freeRecYear(l->next);
+  free(l);
+}
+
+static void freeRecSen(TList l) {
+  if (l == NULL) {
+    return;
+  }
+  freeRecSen(l->tail);
+  free(l);
 }
 
 void freeQuery(QueryADT q) {
   freeRecSen(q->sensors);
   freeRecYear(q->first);
   for (int i = 0; i < DIM_SENS; i++) {
-    free(q->vecSen[i].name);
+    if(q->vecSen[i].name == NULL){
+      continue;
+    }else{
+      free(q->vecSen[i].name);
+    }
   }
   free(q->vecSen);
   free(q);

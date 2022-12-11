@@ -32,24 +32,30 @@ typedef TNode *TList;
 
 typedef struct QueryCDT *QueryADT;
 
-QueryADT newQuery();
+//Crea una nueva estructura para almacenar los datos de las queries.
+QueryADT newQuery(void);
 
+//inserta el vector de sensores creado a partir de los archivos en el cdt.
 void insertVector(QueryADT q, TSensor v[]);
 
+//inserta la lista de años en el cdt.
 void insertList(QueryADT q, Tyear *l);
 
+//crea una lista que ordena los sensores por cantidad de peatones.
 void createList(QueryADT q, TSensor sensor[]);
 
-void query1(QueryADT q);
+//crea el csv y el html para la query 1.
+void Query1(QueryADT q);
 
-void query2(QueryADT q);
+//crea el csv y el html para la query 2.
+void Query2(QueryADT q);
 
-void query3(QueryADT q);
+//crea el csv y el html para la query 3.
+void Query3(QueryADT q);
 
+//libera la memoria utilizada parel cdt.
 void freeQuery(QueryADT q);
 
-void freeRecSen(TList l);
 
-void freeRecYear(Tyear *l);
 
 #endif
