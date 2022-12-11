@@ -51,9 +51,10 @@ TList addRec(TList list, size_t id, long int peds, char flag) { //NO ESTA COPIAN
     aux->tail = list;
     return aux;
   }
-  list->tail = addRec(list->tail, id, peds, flag);
   return list;
 }
+
+
 
 void createList(QueryADT q, TSensor sensor[]) {
   int i;
@@ -70,6 +71,7 @@ void createList(QueryADT q, TSensor sensor[]) {
     perror("Unable to copy information.");
     exit(1);
   } 
+  imprimeL(q);
   q->sensors = ans;
 }
 
