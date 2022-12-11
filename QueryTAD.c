@@ -145,12 +145,8 @@ void freeQuery(QueryADT q) {
   freeRecSen(q->sensors);
   freeRecYear(q->first);
   for (int i = 0; i < DIM_SENS; i++) {
-    if(q->vecSen[i].name == NULL){
-      continue;
-    }else{
       free(q->vecSen[i].name);
     }
-  }
   free(q->vecSen);
   free(q);
 }
