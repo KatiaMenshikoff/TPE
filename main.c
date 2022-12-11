@@ -156,6 +156,7 @@ Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,
   return l;
 }
 
+//las funciones a continuación crean los csv y html 
 void q1(QueryADT q){
     FILE *query1 = fopen("query1.csv", "wt");
     htmlTable table = newTable("query1.html", 2, "Sensor", "Pedestrians");

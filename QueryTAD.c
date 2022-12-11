@@ -40,7 +40,7 @@ void insertVector(QueryADT q, TSensor v[]) {
 void insertList(QueryADT q, Tyear *l) { q->first = l; }
 
 static TList addRec(TList list, size_t id, long int peds,
-                    TSensor sensors[]) { // NO ESTA COPIANDO
+                    TSensor sensors[]) { 
   if (sensors[id - 1].flag == 'R' ||
       sensors[id - 1].flag == 0) {   // si el flag esta en 0, el espacio esta vacío.
     return list; // si el sensor este inactivo no quiero que aparezca en la
@@ -68,7 +68,7 @@ void createList(QueryADT q, TSensor sensor[]) {
   TList ans = NULL;
   for (i = 0; i < DIM_SENS; i++) {
     ans = addRec(ans, (i + 1), sensor[i].Tpedestrians,
-                 sensor); // NO GUARDA EN ANS
+                 sensor); 
   }
   if (ans == NULL) {
     perror("Unable to copy information.");
