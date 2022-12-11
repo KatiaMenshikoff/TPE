@@ -9,7 +9,6 @@
 #include <strings.h>
 #define MAX_LINE 400
 
-// enum week {Monday = 0,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday};
 
 Tyear *makeList(FILE *fReadings, TSensor *vecSensors[]);
 TSensor *makeVec(FILE *fSensor, TSensor * vecSensors);
@@ -29,10 +28,7 @@ int main(int argc, char *argv[]) {
   vecSensors = makeVec(fSensor, vecSensors);
   Tyear *list = makeList(fReadings, &vecSensors);
   insertVector(query, vecSensors);
-  insertList(query, list);
   createList(query, vecSensors);
-  fclose(fSensor);
-  fclose(fReadings);
 
   for (int i = 0; i < DIM_SENS; i++) {
     if(vecSensors[i].name == NULL){
@@ -42,6 +38,10 @@ int main(int argc, char *argv[]) {
     }
   }
   free(vecSensors);
+
+  insertList(query, list);
+  fclose(fSensor);
+  fclose(fReadings);
   Query1(query);
   Query2(query);
   Query3(query);
@@ -114,6 +114,7 @@ Tyear *makeList(FILE *fReadings, TSensor *vecSensors[]) {
   }
   return list;
 }
+
 
 // Crea la lista de años recursivamente.
 Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,

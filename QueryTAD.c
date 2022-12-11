@@ -21,7 +21,6 @@ QueryADT newQuery(void) {
   return new;
 }
 
-
 void insertVector(QueryADT q, TSensor v[]) {
   for (int i = 0; i < DIM_SENS; i++) {
     if (v[i].Namelen == 0) {
@@ -44,8 +43,7 @@ void insertList(QueryADT q, Tyear *l) { q->first = l; }
 static TList addRec(TList list, size_t id, long int peds,
                     TSensor sensors[]) { // NO ESTA COPIANDO
   if (sensors[id - 1].flag == 'R' ||
-      sensors[id - 1].flag ==
-          0) {   // si el flag esta en 0, el espacio esta vacío.
+      sensors[id - 1].flag == 0) {   // si el flag esta en 0, el espacio esta vacío.
     return list; // si el sensor este inactivo no quiero que aparezca en la
                  // fila.
   }
