@@ -36,7 +36,9 @@ void insertVector(QueryADT q, TSensor v[]);
 
 void insertList(QueryADT q, Tyear *l);
 
-void createList(TSensor sensor[], QueryADT q);
+void insertSensor(QueryADT q, TList list);
+
+void createList(QueryADT q,TSensor sensor[]);
 
 void query1(QueryADT q);
 

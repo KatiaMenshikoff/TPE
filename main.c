@@ -12,7 +12,7 @@
 //enum week {Monday = 0,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday};
 
 Tyear *makeList(FILE *fReadings, TSensor vecSensors[]);
-TSensor *makeVec(FILE *fSensor, TSensor vecSensors[]);
+void makeVec(FILE *fSensor, TSensor vecSensors[]);
 Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians);
 
 int main(int argc, char *argv[]) {
@@ -23,28 +23,26 @@ int main(int argc, char *argv[]) {
     perror("Unable to open the file.");
     exit(1);
   }
-  
   QueryADT query = newQuery();
-  TSensor * vecSensors = calloc(DIM_SENS, sizeof(TSensor)); 
-  vecSensors = makeVec(fSensor, vecSensors);
-  fclose(fSensor);
-  insertVector(query, vecSensors);
+  TSensor * vecSensors = calloc(DIM_SENS, sizeof(struct sensor)); 
+  makeVec(fSensor, vecSensors);
   Tyear * list = makeList(fReadings, vecSensors);
-  fclose(fReadings);
+  insertVector(query, vecSensors);
   insertList(query, list);
-  createList(vecSensors, query);
+  createList(query, vecSensors);
+  fclose(fSensor);
+  fclose(fReadings);
   query1(query);
   query2(query);
   query3(query);
   freeQuery(query);
-  return 0;
 }
 
 static bool dayToNum(char s[]){
   return s[0] == 'S' || s[0] == 's';
 }
 
-TSensor *makeVec(FILE *fSensor, TSensor vecSensors[]) {
+void makeVec(FILE *fSensor, TSensor vecSensors[]) {
   char line[MAX_LINE];
   while (!feof(fSensor)) {
     for (int i = 0; fgets(line, MAX_LINE, fSensor); i++) {
@@ -69,7 +67,6 @@ TSensor *makeVec(FILE *fSensor, TSensor vecSensors[]) {
       }
     }
   }
-  return vecSensors;
 }
 
 Tyear * makeList(FILE *fReadings, TSensor vecSensors[]) {

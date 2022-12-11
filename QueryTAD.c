@@ -20,21 +20,23 @@ void insertVector(QueryADT q, TSensor v[]) {
     if (v[i].Namelen == 0) {
       continue;
     }
-    q->vecSen[i].flag = v[i].flag;
-    q->vecSen[i].Namelen = v[i].Namelen;
-    q->vecSen[i].name = malloc(q->vecSen[i].Namelen + 1);
-    if (!v) {
-      perror("Not able to allocate memory.");
-      exit(1);
-    }
-    strcpy(q->vecSen[i].name, v[i].name);
-    q->vecSen[i].Tpedestrians = v[i].Tpedestrians;
+      q->vecSen[i].flag = v[i].flag;
+      q->vecSen[i].Namelen = v[i].Namelen;
+      q->vecSen[i].name = malloc(q->vecSen[i].Namelen + 1);
+      if (q->vecSen[i].name == NULL) {
+        perror("Unable to allocate memory.");
+        exit(1);
+      }
+      strcpy(q->vecSen[i].name, v[i].name);
+      q->vecSen[i].Tpedestrians = v[i].Tpedestrians;
   }
 }
 
-void insertList(QueryADT q, Tyear *l) { q->first = l; }
+void insertList(QueryADT q, Tyear *l) { 
+  q->first = l; 
+}
 
-TList addRec(TList list, size_t id, long int peds) {
+TList addRec(TList list, size_t id, long int peds) { //NO ESTA COPIANDO
   if (list == NULL || peds > list->pedestrians) {
     TList aux = malloc(sizeof(TNode));
     if (aux == NULL) {
@@ -50,16 +52,21 @@ TList addRec(TList list, size_t id, long int peds) {
   return list;
 }
 
-void createList(TSensor sensor[], QueryADT q) {
+void createList(QueryADT q, TSensor sensor[]) {
   int i;
-  TList ans = NULL;
+  TList ans = malloc(sizeof(TNode));
   for (i = 0; i < DIM_SENS; i++) {
-    ans = addRec(ans, i + 1, sensor[i].Tpedestrians);
+    printf("%s\t", sensor[i].name);
+    printf("%c\t", sensor[i].flag);
+    printf("%li\n", sensor[i].Tpedestrians);
+    ans = addRec(ans, (i + 1), sensor[i].Tpedestrians);  //NO GUARDA EN ANS
+    //printf("%li\t", ans->id);
+    //printf("%li\n", ans->pedestrians);
   }
   if (ans == NULL) {
     perror("Unable to copy information.");
     exit(1);
-  }
+  } 
   q->sensors = ans;
 }
 
