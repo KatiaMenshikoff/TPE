@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #define DIM_SENS 86
 
-typedef enum days {
+enum week {
   Monday = 0,
   Tuesday,
   Wednesday,
@@ -12,7 +12,7 @@ typedef enum days {
   Friday,
   Saturday,
   Sunday
-} day;
+};
 
 typedef struct sensor {
   char *name;

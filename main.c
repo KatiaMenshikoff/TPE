@@ -44,12 +44,13 @@ TSensor *makeVec(FILE *fSensor, TSensor vecSensors[]) {
   char line[MAX_LINE];
   while (!feof(fSensor)) {
     for (int i = 0; fgets(line, MAX_LINE, fSensor); i++) {
-      if (i == 0) { // CAMBIAR
+      if (i == 0) { 
         continue;
       } else {
         char *value = strtok(line, ";");
         while (value != NULL) {
           size_t pos = atoi(value);
+          puts(value);
           value = strtok(NULL, ";");
           vecSensors[pos - 1].Namelen = strlen(value);
           vecSensors[pos - 1].name = malloc(vecSensors[pos - 1].Namelen + 1);
@@ -74,7 +75,7 @@ Tyear *makeList(FILE *fReadings, TSensor vecSensors[]) {
   char line2[MAX_LINE];
   while (!feof(fReadings)) {
     for (int i = 0; fgets(line2, MAX_LINE, fReadings); i++) {
-      if (i == 0) { // CAMBIAR
+      if (i == 0) { 
         continue;
       } else {
         char *value = strtok(line2, ";");
@@ -83,7 +84,7 @@ Tyear *makeList(FILE *fReadings, TSensor vecSensors[]) {
           value = strtok(NULL, ";");
           value = strtok(NULL, ";");
           value = strtok(NULL, ";");
-          enum days day = atoi(value);
+          enum week day = atoi(value);
           value = strtok(NULL, ";");
           int ID = atoi(value);
           value = strtok(NULL, ";");
