@@ -114,7 +114,7 @@ Tyear * makeList(FILE *fReadings, TSensor * vecSensors[]) {
 /*Función que crea una lista de años con cantidad de peatones*/
 Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians) {
   if (l == NULL || l->year > year) {
-    Tyear *aux = malloc(sizeof(Tyear));
+    Tyear *aux = malloc(sizeof(struct year));
     if (aux == NULL) {
       perror("Unable to allocate memory.");
       exit(1);

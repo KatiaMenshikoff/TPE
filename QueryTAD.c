@@ -3,8 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-
+#define MAX 15
 
 typedef struct QueryCDT {
   TSensor vecSen[DIM_SENS];
@@ -79,7 +78,7 @@ void query1(QueryADT q) {
   while (q->sensors != NULL) {
     fprintf(query1, "%s, %ld\n", q->vecSen[q->sensors->id - 1].name,
             q->sensors->pedestrians);
-    char c[15];
+    char c[MAX];
     sprintf(c, "%li",q->sensors->pedestrians);
     addHTMLRow(table, q->vecSen[q->sensors->id - 1].name,c);
     q->sensors = q->sensors->tail;
@@ -94,10 +93,14 @@ void query2(QueryADT q) {
                              "Weekends Count", "Total Count");
   fprintf(query2, "Year, Weekdays Count, Weekends Count, Total Count\n");
   while (q->first != NULL) {
-    fprintf(query2, "%lu, %ld, %ld, %ld\n", q->first->year, q->first->Dweek,
+    fprintf(query2, "%li, %li, %li, %li\n", q->first->year, q->first->Dweek,
             q->first->Dweekend, q->first->total);
-    addHTMLRow(table, q->first->year, q->first->Dweek, q->first->Dweekend,
-               q->first->total);
+    char a[MAX], b[MAX], c[MAX], d[MAX];
+    sprintf(a,"%li",q->first->year);
+    sprintf(b,"%li",q->first->Dweek);
+    sprintf(c,"%li",q->first->Dweekend);
+    sprintf(d,"%li",q->first->total);
+    addHTMLRow(table, a,b,c,d);
     q->first = q->first->next;
   }
   fclose(query2);
