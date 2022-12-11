@@ -5,11 +5,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define MAX_LINE 250
+#include <strings.h>
+#include <stdbool.h>
+#define MAX_LINE 400
+
+//enum week {Monday = 0,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday};
 
 Tyear *makeList(FILE *fReadings, TSensor vecSensors[]);
 TSensor *makeVec(FILE *fSensor, TSensor vecSensors[]);
-Tyear *makeRec(Tyear *l, size_t year, int day, int ID, int pedestrians,
+Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,
                TSensor sensors[]);
 
 int main(int argc, char *argv[]) {
@@ -29,7 +33,7 @@ int main(int argc, char *argv[]) {
     perror("Unable to open the file.");
     exit(1);
   }
-  Tyear *list = makeList(fReadings, vecSensors);
+  Tyear * list = makeList(fReadings, vecSensors);
   fclose(fReadings);
   insertList(query, list);
   createList(vecSensors, query);
@@ -38,6 +42,10 @@ int main(int argc, char *argv[]) {
   query3(query);
   freeQuery(query);
   return 0;
+}
+
+static bool dayToNum(char s[]){
+  return s[0] == 'S' || s[0] == 's';
 }
 
 TSensor *makeVec(FILE *fSensor, TSensor vecSensors[]) {
@@ -49,13 +57,12 @@ TSensor *makeVec(FILE *fSensor, TSensor vecSensors[]) {
       } else {
         char *value = strtok(line, ";");
         while (value != NULL) {
-          size_t pos = atoi(value);
-          puts(value);
+          size_t pos =atoi(value);
           value = strtok(NULL, ";");
           vecSensors[pos - 1].Namelen = strlen(value);
           vecSensors[pos - 1].name = malloc(vecSensors[pos - 1].Namelen + 1);
           if (vecSensors[pos - 1].name == NULL) {
-            perror("Not able to allocate memory.");
+            perror("Unable to allocate memory.");
             exit(1);
           }
           vecSensors[pos - 1].name = strcpy(vecSensors[pos - 1].name, value);
@@ -70,8 +77,8 @@ TSensor *makeVec(FILE *fSensor, TSensor vecSensors[]) {
   return vecSensors;
 }
 
-Tyear *makeList(FILE *fReadings, TSensor vecSensors[]) {
-  Tyear *list;
+Tyear * makeList(FILE *fReadings, TSensor vecSensors[]) {
+  Tyear *list = NULL;
   char line2[MAX_LINE];
   while (!feof(fReadings)) {
     for (int i = 0; fgets(line2, MAX_LINE, fReadings); i++) {
@@ -79,17 +86,22 @@ Tyear *makeList(FILE *fReadings, TSensor vecSensors[]) {
         continue;
       } else {
         char *value = strtok(line2, ";");
+        printf("%s\n", value);
         while (value != NULL) {
-          size_t year = (size_t)value;
+          size_t year = atoi(value);
+          printf("YEAR: %lu\t", year);
           value = strtok(NULL, ";");
           value = strtok(NULL, ";");
           value = strtok(NULL, ";");
-          enum week day = (size_t)value;
+          bool day = dayToNum(value);
+          printf("DAY: %d\t", day);
           value = strtok(NULL, ";");
-          int ID = (size_t)value;
+          int ID = atoi(value);
+          printf("ID: %i\t", ID);
           value = strtok(NULL, ";");
           value = strtok(NULL, ";");
-          int pedestrians = (size_t)value;
+          int pedestrians = atoi(value);
+          printf("PED: %i\n", pedestrians);
           list = makeRec(list, year, day, ID, pedestrians, vecSensors);
         }
       }
@@ -99,15 +111,14 @@ Tyear *makeList(FILE *fReadings, TSensor vecSensors[]) {
 }
 
 /*Función que crea una lista de años con cantidad de peatones*/
-Tyear *makeRec(Tyear *l, size_t year, int day, int ID, int pedestrians,
-               TSensor sensors[]) {
+Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,TSensor sensors[]) {
   if (l == NULL || l->year > year) {
     Tyear *aux = malloc(sizeof(Tyear));
     if (aux == NULL) {
-      perror("Not able to allocate memory.");
+      perror("Unable to allocate memory.");
       exit(1);
     }
-    if (day < 5) {
+    if (!day) {
       aux->Dweek = pedestrians;
       aux->Dweekend = 0;
     } else {
@@ -120,7 +131,7 @@ Tyear *makeRec(Tyear *l, size_t year, int day, int ID, int pedestrians,
     return aux;
   }
   if (l->year == year) {
-    if (day < 5) {
+    if (!day) {
       l->Dweek += pedestrians;
     } else {
       l->Dweekend += pedestrians;

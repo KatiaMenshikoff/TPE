@@ -4,15 +4,6 @@
 #include <stdlib.h>
 #define DIM_SENS 86
 
-enum week {
-  Monday = 0,
-  Tuesday,
-  Wednesday,
-  Thursday,
-  Friday,
-  Saturday,
-  Sunday
-};
 
 typedef struct sensor {
   char *name;
