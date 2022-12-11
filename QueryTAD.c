@@ -11,12 +11,17 @@ typedef struct QueryCDT {
   Tyear *first; // usamos lista para guardar los años en orden.
   TList sensors;
 } QueryCDT;
+
 QueryADT newQuery() {
   QueryADT new = calloc(1, sizeof(QueryCDT));
+  if (new == NULL) {
+    perror("Unable to allocate memory.");
+    exit(1);
+  }
   return new;
 }
 
-void freeRecYear(Tyear *l) {
+void freeRecYear(TListYear l) {
   if (l == NULL) {
     return;
   }
@@ -32,33 +37,36 @@ void freeRecSen(TList l) {
   free(l);
 }
 
-
 void insertVector(QueryADT q, TSensor v[]) {
   for (int i = 0; i < DIM_SENS; i++) {
     if (v[i].Namelen == 0) {
       continue;
     }
-      q->vecSen[i].flag = v[i].flag;
-      q->vecSen[i].Namelen = v[i].Namelen;
-      q->vecSen[i].name = malloc(q->vecSen[i].Namelen + 1);
-      if (q->vecSen[i].name == NULL) {
-        perror("Unable to allocate memory.");
-        exit(1);
-      }
-      strcpy(q->vecSen[i].name, v[i].name);
-      q->vecSen[i].Tpedestrians = v[i].Tpedestrians;
+    q->vecSen[i].flag = v[i].flag;
+    q->vecSen[i].Namelen = v[i].Namelen;
+    q->vecSen[i].name = malloc(q->vecSen[i].Namelen + 1);
+    if (q->vecSen[i].name == NULL) {
+      perror("Unable to allocate memory.");
+      exit(1);
+    }
+    strcpy(q->vecSen[i].name, v[i].name);
+    q->vecSen[i].Tpedestrians = v[i].Tpedestrians;
   }
 }
 
-void insertList(QueryADT q, Tyear *l) { 
-  q->first = l; 
-}
+void insertList(QueryADT q, Tyear *l) { q->first = l; }
 
-static TList addRec(TList list, size_t id, long int peds, TSensor sensors[]) { //NO ESTA COPIANDO
-  if(sensors[id - 1].flag == 'R' || sensors[id -1].flag==0){ // si el flag esta en 0, el espacio esta vacío.
-    return list; //si el sensor este inactivo no quiero que aparezca en la fila.
+static TList addRec(TList list, size_t id, long int peds,
+                    TSensor sensors[]) { // NO ESTA COPIANDO
+  if (sensors[id - 1].flag == 'R' ||
+      sensors[id - 1].flag ==
+          0) {   // si el flag esta en 0, el espacio esta vacío.
+    return list; // si el sensor este inactivo no quiero que aparezca en la
+                 // fila.
   }
-  if (list == NULL || peds > list->pedestrians|| (peds == list->pedestrians && strcasecmp(sensors[id - 1].name, sensors[list->id - 1].name) < 0)) {
+  if (list == NULL || peds > list->pedestrians ||
+      (peds == list->pedestrians &&
+       strcasecmp(sensors[id - 1].name, sensors[list->id - 1].name) < 0)) {
     TList aux = malloc(sizeof(TNode));
     if (aux == NULL) {
       perror("Not able to allocate memory.");
@@ -77,12 +85,13 @@ void createList(QueryADT q, TSensor sensor[]) {
   int i;
   TList ans = NULL;
   for (i = 0; i < DIM_SENS; i++) {
-    ans = addRec(ans, (i + 1), sensor[i].Tpedestrians, sensor);  //NO GUARDA EN ANS
+    ans = addRec(ans, (i + 1), sensor[i].Tpedestrians,
+                 sensor); // NO GUARDA EN ANS
   }
   if (ans == NULL) {
     perror("Unable to copy information.");
     exit(1);
-  } 
+  }
   q->sensors = ans;
 }
 
@@ -94,8 +103,8 @@ void query1(QueryADT q) {
     fprintf(query1, "%s, %ld\n", q->vecSen[q->sensors->id - 1].name,
             q->sensors->pedestrians);
     char c[MAX];
-    sprintf(c, "%li",q->sensors->pedestrians);
-    addHTMLRow(table, q->vecSen[q->sensors->id - 1].name,c);
+    sprintf(c, "%li", q->sensors->pedestrians);
+    addHTMLRow(table, q->vecSen[q->sensors->id - 1].name, c);
     q->sensors = q->sensors->tail;
   }
   closeHTMLTable(table);
@@ -105,18 +114,18 @@ void query1(QueryADT q) {
 void query2(QueryADT q) {
   FILE *query2 = fopen("query2.csv", "wt");
   htmlTable table2 = newTable("query2.html", 4, "Year", "Weekdays Count",
-                             "Weekends Count", "Total Count");
+                              "Weekends Count", "Total Count");
   fprintf(query2, "Year, Weekdays Count, Weekends Count, Total Count\n");
-  Tyear * aux = q->first;
+  Tyear *aux = q->first;
   while (aux != NULL) {
     fprintf(query2, "%li, %li, %li, %li\n", aux->year, aux->Dweek,
             aux->Dweekend, aux->total);
     char a[MAX], b[MAX], c[MAX], d[MAX];
-    sprintf(a,"%li",aux->year);
-    sprintf(b,"%li",aux->Dweek);
-    sprintf(c,"%li",aux->Dweekend);
-    sprintf(d,"%li",aux->total);
-    addHTMLRow(table2, a,b,c,d);
+    sprintf(a, "%li", aux->year);
+    sprintf(b, "%li", aux->Dweek);
+    sprintf(c, "%li", aux->Dweekend);
+    sprintf(d, "%li", aux->total);
+    addHTMLRow(table2, a, b, c, d);
     aux = aux->next;
   }
   fclose(query2);
@@ -127,29 +136,28 @@ void query3(QueryADT q) {
   FILE *ansQuery3 = fopen("query3.csv", "wt");
   htmlTable table3 = newTable("query3.html", 2, "Year", "Pedestrians Avg");
   fprintf(ansQuery3, "Year, Pedestrians Avg\n");
-  Tyear * aux = q->first;
+  Tyear *aux = q->first;
   while (aux != NULL) {
     if ((aux->year) % 4 == 0) {
       float i = (float)aux->total / 366.0;
-      fprintf(ansQuery3, "%li, %.2f\n", aux->year,i);
+      fprintf(ansQuery3, "%li, %.2f\n", aux->year, i);
       char y[MAX], a[MAX];
-      sprintf(y,"%li",aux->year);
-      sprintf(a,"%.2f",i);
+      sprintf(y, "%li", aux->year);
+      sprintf(a, "%.2f", i);
       addHTMLRow(table3, y, a);
     } else {
       float j = (float)aux->total / 365.0;
-      fprintf(ansQuery3, "%li, %.2f\n", aux->year,j);
+      fprintf(ansQuery3, "%li, %.2f\n", aux->year, j);
       char y2[MAX], a2[MAX];
-      sprintf(y2,"%li",aux->year);
-      sprintf(a2,"%.2f",j);
-      addHTMLRow(table3,y2, a2);
+      sprintf(y2, "%li", aux->year);
+      sprintf(a2, "%.2f", j);
+      addHTMLRow(table3, y2, a2);
     }
     aux = aux->next;
   }
   fclose(ansQuery3);
   closeHTMLTable(table3);
 }
-
 
 void freeQuery(QueryADT q) {
   freeRecSen(q->sensors);

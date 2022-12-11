@@ -20,6 +20,8 @@ typedef struct year {
   struct year *next; // siguiente año porque vamos a armar una lista de años.
 } Tyear;
 
+typedef Tyear *TListYear;
+
 typedef struct node {
   size_t id;
   long int pedestrians;
@@ -36,7 +38,7 @@ void insertVector(QueryADT q, TSensor v[]);
 
 void insertList(QueryADT q, Tyear *l);
 
-void createList(QueryADT q,TSensor sensor[]);
+void createList(QueryADT q, TSensor sensor[]);
 
 void query1(QueryADT q);
 

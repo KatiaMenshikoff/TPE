@@ -1,19 +1,20 @@
 #include "QueryTAD.h"
 #include <ctype.h>
 #include <math.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
-#include <stdbool.h>
 #define MAX_LINE 400
 
-//enum week {Monday = 0,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday};
+// enum week {Monday = 0,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday};
 
-Tyear *makeList(FILE *fReadings, TSensor * vecSensors[]);
-TSensor * makeVec(FILE *fSensor);
-Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians, char flag);
+Tyear *makeList(FILE *fReadings, TSensor *vecSensors[]);
+TSensor *makeVec(FILE *fSensor);
+Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,
+               char flag);
 
 int main(int argc, char *argv[]) {
   FILE *fSensor = fopen(argv[1], "rt");
@@ -24,9 +25,9 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
   QueryADT query = newQuery();
-  TSensor * vecSensors = calloc(DIM_SENS, sizeof(struct sensor)); 
+  TSensor *vecSensors = calloc(DIM_SENS, sizeof(struct sensor));
   vecSensors = makeVec(fSensor);
-  Tyear * list = makeList(fReadings, &vecSensors);
+  Tyear *list = makeList(fReadings, &vecSensors);
   insertVector(query, vecSensors);
   insertList(query, list);
   createList(query, vecSensors);
@@ -35,28 +36,27 @@ int main(int argc, char *argv[]) {
   query1(query);
   query2(query);
   query3(query);
-  for (int i = 0; i<DIM_SENS; i++){
+  for (int i = 0; i < DIM_SENS; i++) {
     free(vecSensors[i].name);
   }
   free(vecSensors);
-  freeRecYear(list);
+  // freeRecYear(list);
   freeQuery(query);
+  // free(query);
 }
 
-static bool dayToNum(char s[]){
-  return s[0] == 'S' || s[0] == 's';
-}
+static bool dayToNum(char s[]) { return s[0] == 'S' || s[0] == 's'; }
 
-TSensor * makeVec(FILE *fSensor) {
+TSensor *makeVec(FILE *fSensor) {
   char line[MAX_LINE];
-  TSensor * vecSensors = calloc(DIM_SENS,sizeof(TSensor));
-  if(vecSensors==NULL){
+  TSensor *vecSensors = calloc(DIM_SENS, sizeof(TSensor));
+  if (vecSensors == NULL) {
     perror("Unable to allocate memory.");
     exit(1);
   }
   while (!feof(fSensor)) {
     for (int i = 0; fgets(line, MAX_LINE, fSensor); i++) {
-      if (i == 0) { 
+      if (i == 0) {
         continue;
       } else {
         char *value = strtok(line, ";");
@@ -80,14 +80,12 @@ TSensor * makeVec(FILE *fSensor) {
   return vecSensors;
 }
 
-
-
-Tyear * makeList(FILE *fReadings, TSensor * vecSensors[]) {
+Tyear *makeList(FILE *fReadings, TSensor *vecSensors[]) {
   Tyear *list = NULL;
   char line2[MAX_LINE];
   while (!feof(fReadings)) {
     for (int i = 0; fgets(line2, MAX_LINE, fReadings); i++) {
-      if (i == 0) { 
+      if (i == 0) {
         continue;
       } else {
         char *value = strtok(line2, ";");
@@ -103,7 +101,8 @@ Tyear * makeList(FILE *fReadings, TSensor * vecSensors[]) {
           value = strtok(NULL, ";");
           int pedestrians = atoi(value);
           (*vecSensors)[ID - 1].Tpedestrians += pedestrians;
-          list = makeRec(list, year, day, ID, pedestrians, (*vecSensors)[ID - 1].flag);
+          list = makeRec(list, year, day, ID, pedestrians,
+                         (*vecSensors)[ID - 1].flag);
           value = strtok(NULL, ";");
         }
       }
@@ -113,8 +112,9 @@ Tyear * makeList(FILE *fReadings, TSensor * vecSensors[]) {
 }
 
 /*Función que crea una lista de años con cantidad de peatones*/
-Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians, char flag) {
-  if (flag == 'R'){
+Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,
+               char flag) {
+  if (flag == 'R') {
     return l;
   }
   if (l == NULL || l->year > year) {
