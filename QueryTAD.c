@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+
 typedef struct QueryCDT {
   TSensor vecSen[DIM_SENS];
   Tyear *first; // usamos lista para guardar los años en orden.
@@ -37,8 +39,8 @@ void insertList(QueryADT q, Tyear *l) {
 }
 
 TList addRec(TList list, size_t id, long int peds, char flag) { //NO ESTA COPIANDO
-  if(flag == 'R'){
-    return NULL; //si el sensor este inactivo no quiero que aparezca en la fila.
+  if(flag == 'R' || flag==0){ // si el flag esta en 0, el espacio esta vacío.
+    return list; //si el sensor este inactivo no quiero que aparezca en la fila.
   }
   if (list == NULL || peds > list->pedestrians) {
     TList aux = malloc(sizeof(TNode));
@@ -51,6 +53,7 @@ TList addRec(TList list, size_t id, long int peds, char flag) { //NO ESTA COPIAN
     aux->tail = list;
     return aux;
   }
+  list->tail = addRec(list->tail, id, peds, flag);
   return list;
 }
 
@@ -60,18 +63,12 @@ void createList(QueryADT q, TSensor sensor[]) {
   int i;
   TList ans = NULL;
   for (i = 0; i < DIM_SENS; i++) {
-    //printf("%s\t", sensor[i].name);
-    //printf("%c\t", sensor[i].flag);
-    //printf("%li\n", sensor[i].Tpedestrians);
     ans = addRec(ans, (i + 1), sensor[i].Tpedestrians, sensor[i].flag);  //NO GUARDA EN ANS
-    //printf("%li\t", ans->id);
-    //printf("%li\n", ans->pedestrians);
   }
   if (ans == NULL) {
     perror("Unable to copy information.");
     exit(1);
   } 
-  imprimeL(q);
   q->sensors = ans;
 }
 
@@ -82,8 +79,9 @@ void query1(QueryADT q) {
   while (q->sensors != NULL) {
     fprintf(query1, "%s, %ld\n", q->vecSen[q->sensors->id - 1].name,
             q->sensors->pedestrians);
-    addHTMLRow(table, q->vecSen[q->sensors->id - 1].name,
-               q->sensors->pedestrians);
+    char c[15];
+    sprintf(c, "%li",q->sensors->pedestrians);
+    addHTMLRow(table, q->vecSen[q->sensors->id - 1].name,c);
     q->sensors = q->sensors->tail;
   }
   closeHTMLTable(table);

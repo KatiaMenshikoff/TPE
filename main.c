@@ -27,12 +27,6 @@ int main(int argc, char *argv[]) {
   TSensor * vecSensors = calloc(DIM_SENS, sizeof(struct sensor)); 
   vecSensors = makeVec(fSensor);
   Tyear * list = makeList(fReadings, &vecSensors);
-
-  /*for(int i = 0; i<DIM_SENS; i++){
-      printf("%s\t %i \t",vecSensors[i].name, i+1);
-      printf("%li\n", vecSensors[i].Tpedestrians);
-  } */
-
   insertVector(query, vecSensors);
   insertList(query, list);
   createList(query, vecSensors);
