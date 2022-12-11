@@ -87,19 +87,19 @@ Tyear * makeList(FILE *fReadings, TSensor vecSensors[]) {
         char *value = strtok(line2, ";");
         while (value != NULL) {
           size_t year = atoi(value);
-          printf("YEAR: %lu\t", year);
+          //printf("YEAR: %lu\t", year);
           value = strtok(NULL, ";");
           value = strtok(NULL, ";");
           value = strtok(NULL, ";");
           bool day = dayToNum(value);
-          printf("DAY: %d\t", day);
+          //printf("DAY: %d\t", day);
           value = strtok(NULL, ";");
           int ID = atoi(value);
-          printf("ID: %i\t", ID);
+          //printf("ID: %i\t", ID);
           value = strtok(NULL, ";");
           value = strtok(NULL, ";");
           int pedestrians = atoi(value);
-          printf("PED: %i\n", pedestrians);
+          //printf("PED: %i\n", pedestrians);
           list = makeRec(list, year, day, ID, pedestrians);
           value = strtok(NULL, ";");
         }

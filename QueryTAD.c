@@ -52,7 +52,7 @@ TList addRec(TList list, size_t id, long int peds) {
 
 void createList(TSensor sensor[], QueryADT q) {
   int i;
-  TList ans;
+  TList ans = NULL;
   for (i = 0; i < DIM_SENS; i++) {
     ans = addRec(ans, i + 1, sensor[i].Tpedestrians);
   }
