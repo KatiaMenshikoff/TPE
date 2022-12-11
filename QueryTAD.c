@@ -79,7 +79,7 @@ void createList(QueryADT q, TSensor sensor[]) {
 
 void Query1(QueryADT q, FILE * query1, htmlTable table) {
   while (q->sensors != NULL) {
-    fprintf(query1, "%s, %ld\n", q->vecSen[q->sensors->id - 1].name,
+    fprintf(query1, "%s; %ld\n", q->vecSen[q->sensors->id - 1].name,
             q->sensors->pedestrians);
     char c[MAX];
     sprintf(c, "%li", q->sensors->pedestrians);
@@ -91,7 +91,7 @@ void Query1(QueryADT q, FILE * query1, htmlTable table) {
 void Query2(QueryADT q, FILE * query2, htmlTable table2) {
   Tyear *aux = q->first;
   while (aux != NULL) {
-    fprintf(query2, "%li, %li, %li, %li\n", aux->year, aux->Dweek,
+    fprintf(query2, "%li; %li; %li; %li\n", aux->year, aux->Dweek,
             aux->Dweekend, aux->total);
     char a[MAX], b[MAX], c[MAX], d[MAX];
     sprintf(a, "%li", aux->year);
@@ -108,14 +108,14 @@ void Query3(QueryADT q,FILE * query3, htmlTable table3) {
   while (aux != NULL) {
     if ((aux->year) % 4 == 0) {
       float i = (float)aux->total / 366.0;
-      fprintf(query3, "%li, %.2f\n", aux->year, i);
+      fprintf(query3, "%li; %.2f\n", aux->year, i);
       char y[MAX], a[MAX];
       sprintf(y, "%li", aux->year);
       sprintf(a, "%.2f", i);
       addHTMLRow(table3, y, a);
     } else {
       float j = (float)aux->total / 365.0;
-      fprintf(query3, "%li, %.2f\n", aux->year, j);
+      fprintf(query3, "%li; %.2f\n", aux->year, j);
       char y2[MAX], a2[MAX];
       sprintf(y2, "%li", aux->year);
       sprintf(a2, "%.2f", j);
