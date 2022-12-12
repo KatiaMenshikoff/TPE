@@ -9,9 +9,8 @@
 #include <strings.h>
 #define MAX_LINE 400
 
-
 Tyear *makeList(FILE *fReadings, TSensor *vecSensors[]);
-TSensor *makeVec(FILE *fSensor, TSensor * vecSensors);
+TSensor *makeVec(FILE *fSensor, TSensor *vecSensors);
 Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,
                char flag);
 void q1(QueryADT q);
@@ -30,25 +29,25 @@ int main(int argc, char *argv[]) {
   TSensor *vecSensors = calloc(DIM_SENS, sizeof(struct sensor));
   vecSensors = makeVec(fSensor, vecSensors);
   Tyear *list = makeList(fReadings, &vecSensors);
-  //insertVector(query, vecSensors);
+  // insertVector(query, vecSensors);
   createList(query, vecSensors);
-  for (int i = 0; i < DIM_SENS; i++) {
-        free(vecSensors[i].name);
-  }
-  free(vecSensors);
   insertList(query, list);
   fclose(fSensor);
   fclose(fReadings);
   q1(query);
   q2(query);
   q3(query);
+  for (int i = 0; i < DIM_SENS; i++) {
+    free(vecSensors[i].name);
+  }
+  free(vecSensors);
   freeQuery(query);
 }
 
 static bool dayToNum(char s[]) { return s[0] == 'S' || s[0] == 's'; }
 
-//crea un vector de sensores ordenados por ID.
-TSensor *makeVec(FILE *fSensor,TSensor *vecSensors) {
+// crea un vector de sensores ordenados por ID.
+TSensor *makeVec(FILE *fSensor, TSensor *vecSensors) {
   char line[MAX_LINE];
   if (vecSensors == NULL) {
     perror("Unable to allocate memory.");
@@ -80,7 +79,7 @@ TSensor *makeVec(FILE *fSensor,TSensor *vecSensors) {
   return vecSensors;
 }
 
-//crea una lista de años ordenados de mayor a menor.
+// crea una lista de años ordenados de mayor a menor.
 Tyear *makeList(FILE *fReadings, TSensor *vecSensors[]) {
   Tyear *list = NULL;
   char line2[MAX_LINE];
@@ -111,7 +110,6 @@ Tyear *makeList(FILE *fReadings, TSensor *vecSensors[]) {
   }
   return list;
 }
-
 
 // Crea la lista de años recursivamente.
 Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,
@@ -150,14 +148,14 @@ Tyear *makeRec(Tyear *l, size_t year, bool day, int ID, int pedestrians,
   return l;
 }
 
-//las funciones a continuación crean los csv y html 
-void q1(QueryADT q){
-    FILE *query1 = fopen("query1.csv", "wt");
-    htmlTable table = newTable("query1.html", 2, "Sensor", "Pedestrians");
-    fprintf(query1, "Sensor; Pedestrians\n");
-    Query1(q, query1, table);
-    closeHTMLTable(table);
-    fclose(query1);
+// las funciones a continuación crean los csv y html
+void q1(QueryADT q) {
+  FILE *query1 = fopen("query1.csv", "wt");
+  htmlTable table = newTable("query1.html", 2, "Sensor", "Pedestrians");
+  fprintf(query1, "Sensor; Pedestrians\n");
+  Query1(q, query1, table);
+  closeHTMLTable(table);
+  fclose(query1);
 }
 
 void q2(QueryADT q) {
@@ -170,7 +168,7 @@ void q2(QueryADT q) {
   closeHTMLTable(table2);
 }
 
-void q3(QueryADT q){
+void q3(QueryADT q) {
   FILE *query3 = fopen("query3.csv", "wt");
   htmlTable table3 = newTable("query3.html", 2, "Year", "Pedestrians Avg");
   fprintf(query3, "Year; Pedestrians Avg\n");

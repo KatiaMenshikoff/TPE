@@ -1,4 +1,5 @@
 #include "QueryTAD.h"
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,7 +7,7 @@
 #define MAX 15
 
 typedef struct QueryCDT {
-  //TSensor vecSen[DIM_SENS];
+  // TSensor vecSen[DIM_SENS];
   Tyear *first; // usamos lista para guardar los años en orden.
   TList sensors;
 } QueryCDT;
@@ -20,54 +21,95 @@ QueryADT newQuery(void) {
   return new;
 }
 
-
-
 void insertList(QueryADT q, Tyear *l) { q->first = l; }
 
-static TList addRec(TList list, size_t id, long int peds,
-                    TSensor sensors[]) { 
-  if (sensors[id - 1].flag == 'R' ||
-      sensors[id - 1].flag == 0) {   // si el flag esta en 0, el espacio esta vacío.
-    return list; // si el sensor este inactivo no quiero que aparezca en la
-                 // fila.
+static TList addRec(TList list, TList node) {
+  if (list == NULL || node->pedestrians > list->pedestrians ||
+      (node->pedestrians == list->pedestrians &&
+       strcasecmp(node->name, list->name) < 0)) {
+    node->tail = list;
+    // free(list);
+    return node;
   }
-  if (list == NULL || peds > list->pedestrians ||
-      (peds == list->pedestrians &&
-       strcasecmp(sensors[id - 1].name, sensors[list->id - 1].name) < 0)) {
-    TList aux = malloc(sizeof(TNode));
-    if (aux == NULL) {
-      perror("Not able to allocate memory.");
-      exit(1);
-    }
-    aux->id = id;
-    aux->pedestrians = peds;
-    aux->tail = list;
-    aux->name = malloc(sensors[id-1].Namelen);
-    strcpy(aux->name, sensors[id-1].name);
-    return aux;
-  }
-  list->tail = addRec(list->tail, id, peds, sensors);
+  list->tail = addRec(list->tail, node);
   return list;
 }
 
-void createList(QueryADT q, TSensor sensor[]) {
-  int i;
-  TList ans = NULL;
-  for (i = 0; i < DIM_SENS; i++) {
-    ans = addRec(ans, (i + 1), sensor[i].Tpedestrians,
-                 sensor); 
+#define BLOQ 5
+
+static char *copystr(char *str) {
+  char *copy = NULL;
+  int i = 0;
+  size_t reserved = 0;
+  while (str[i] != 0) {
+    if (i % BLOQ == 0) {
+      reserved += BLOQ;
+      copy = realloc(copy, reserved);
+    }
+    copy[i] = str[i];
+    i++;
   }
-  if (ans == NULL) {
-    perror("Unable to copy information.");
-    exit(1);
-  }
-  q->sensors = ans;
+  copy = realloc(copy, i);
+  copy[i] = 0;
+  return copy;
 }
 
-void Query1(QueryADT q, FILE * query1, htmlTable table) {
+void createList(QueryADT q, TSensor *sensor) {
+  for (int i = 0; i < DIM_SENS; i++) {
+    TList new = malloc(sizeof(TNode));
+    new->id = i + 1;
+    new->name = copystr(sensor[i].name);
+    new->pedestrians = sensor[i].Tpedestrians;
+    if (sensor[i].flag != 'R') {
+      q->sensors = addRec(q->sensors, new);
+    }
+  }
+}
+
+// static TList addRec(TList list, size_t id, long int peds,
+//                     TSensor sensors[]) {
+//   if (sensors[id - 1].flag == 'R' ||
+//       sensors[id - 1].flag == 0) {   // si el flag esta en 0, el espacio esta
+//       vacío.
+//     return list; // si el sensor este inactivo no quiero que aparezca en la
+//                  // fila.
+//   }
+//   if (list == NULL || peds > list->pedestrians ||
+//       (peds == list->pedestrians &&
+//        strcasecmp(sensors[id - 1].name, sensors[list->id - 1].name) < 0)) {
+//     TList aux = malloc(sizeof(TNode));
+//     if (aux == NULL) {
+//       perror("Not able to allocate memory.");
+//       exit(1);
+//     }
+//     aux->id = id;
+//     aux->pedestrians = peds;
+//     aux->tail = list;
+//     aux->name = malloc(sensors[id-1].Namelen);
+//     strcpy(aux->name, sensors[id-1].name);
+//     return aux;
+//   }
+//   list->tail = addRec(list->tail, id, peds, sensors);
+//   return list;
+// }
+//
+// void createList(QueryADT q, TSensor sensor[]) {
+//   int i;
+//   TList ans = NULL;
+//   for (i = 0; i < DIM_SENS; i++) {
+//     ans = addRec(ans, (i + 1), sensor[i].Tpedestrians,
+//                  sensor);
+//   }
+//   if (ans == NULL) {
+//     perror("Unable to copy information.");
+//     exit(1);
+//   }
+//   q->sensors = ans;
+// }
+
+void Query1(QueryADT q, FILE *query1, htmlTable table) {
   while (q->sensors != NULL) {
-    fprintf(query1, "%s; %ld\n", q->sensors->name,
-            q->sensors->pedestrians);
+    fprintf(query1, "%s; %ld\n", q->sensors->name, q->sensors->pedestrians);
     char c[MAX];
     sprintf(c, "%li", q->sensors->pedestrians);
     addHTMLRow(table, q->sensors->name, c);
@@ -75,7 +117,7 @@ void Query1(QueryADT q, FILE * query1, htmlTable table) {
   }
 }
 
-void Query2(QueryADT q, FILE * query2, htmlTable table2) {
+void Query2(QueryADT q, FILE *query2, htmlTable table2) {
   Tyear *aux = q->first;
   while (aux != NULL) {
     fprintf(query2, "%li; %li; %li; %li\n", aux->year, aux->Dweek,
@@ -90,7 +132,7 @@ void Query2(QueryADT q, FILE * query2, htmlTable table2) {
   }
 }
 
-void Query3(QueryADT q,FILE * query3, htmlTable table3) {
+void Query3(QueryADT q, FILE *query3, htmlTable table3) {
   Tyear *aux = q->first;
   while (aux != NULL) {
     if ((aux->year) % 4 == 0) {
