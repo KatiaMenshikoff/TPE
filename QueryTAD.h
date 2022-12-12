@@ -27,6 +27,7 @@ typedef struct node {
   size_t id;
   long int pedestrians;
   struct node *tail;
+  char * name;
 } TNode;
 
 typedef TNode *TList;
@@ -37,7 +38,7 @@ typedef struct QueryCDT *QueryADT;
 QueryADT newQuery(void);
 
 //inserta el vector de sensores creado a partir de los archivos en el cdt.
-void insertVector(QueryADT q, TSensor v[]);
+//void insertVector(QueryADT q, TSensor v[]);
 
 //inserta la lista de años en el cdt.
 void insertList(QueryADT q, Tyear *l);

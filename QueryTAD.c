@@ -6,7 +6,7 @@
 #define MAX 15
 
 typedef struct QueryCDT {
-  TSensor vecSen[DIM_SENS];
+  //TSensor vecSen[DIM_SENS];
   Tyear *first; // usamos lista para guardar los años en orden.
   TList sensors;
 } QueryCDT;
@@ -20,22 +20,7 @@ QueryADT newQuery(void) {
   return new;
 }
 
-void insertVector(QueryADT q, TSensor v[]) {
-  for (int i = 0; i < DIM_SENS; i++) {
-    if (v[i].Namelen == 0) {
-      continue;
-    }
-    q->vecSen[i].flag = v[i].flag;
-    q->vecSen[i].Namelen = v[i].Namelen;
-    q->vecSen[i].name = malloc(q->vecSen[i].Namelen + 1);
-    if (q->vecSen[i].name == NULL) {
-      perror("Unable to allocate memory.");
-      exit(1);
-    }
-    strcpy(q->vecSen[i].name, v[i].name);
-    q->vecSen[i].Tpedestrians = v[i].Tpedestrians;
-  }
-}
+
 
 void insertList(QueryADT q, Tyear *l) { q->first = l; }
 
@@ -57,6 +42,8 @@ static TList addRec(TList list, size_t id, long int peds,
     aux->id = id;
     aux->pedestrians = peds;
     aux->tail = list;
+    aux->name = malloc(sensors[id-1].Namelen);
+    strcpy(aux->name, sensors[id-1].name);
     return aux;
   }
   list->tail = addRec(list->tail, id, peds, sensors);
@@ -79,11 +66,11 @@ void createList(QueryADT q, TSensor sensor[]) {
 
 void Query1(QueryADT q, FILE * query1, htmlTable table) {
   while (q->sensors != NULL) {
-    fprintf(query1, "%s; %ld\n", q->vecSen[q->sensors->id - 1].name,
+    fprintf(query1, "%s; %ld\n", q->sensors->name,
             q->sensors->pedestrians);
     char c[MAX];
     sprintf(c, "%li", q->sensors->pedestrians);
-    addHTMLRow(table, q->vecSen[q->sensors->id - 1].name, c);
+    addHTMLRow(table, q->sensors->name, c);
     q->sensors = q->sensors->tail;
   }
 }
@@ -144,9 +131,5 @@ static void freeRecSen(TList l) {
 void freeQuery(QueryADT q) {
   freeRecSen(q->sensors);
   freeRecYear(q->first);
-  for (int i = 0; i < DIM_SENS; i++) {
-      free(q->vecSen[i].name);
-    }
-  free(q->vecSen);
   free(q);
 }

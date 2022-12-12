@@ -30,18 +30,12 @@ int main(int argc, char *argv[]) {
   TSensor *vecSensors = calloc(DIM_SENS, sizeof(struct sensor));
   vecSensors = makeVec(fSensor, vecSensors);
   Tyear *list = makeList(fReadings, &vecSensors);
-  insertVector(query, vecSensors);
+  //insertVector(query, vecSensors);
   createList(query, vecSensors);
-
   for (int i = 0; i < DIM_SENS; i++) {
-    if(vecSensors[i].name == NULL){
-      continue;
-    } else{
         free(vecSensors[i].name);
-    }
   }
   free(vecSensors);
-
   insertList(query, list);
   fclose(fSensor);
   fclose(fReadings);
